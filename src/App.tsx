@@ -8,7 +8,8 @@ import {
   Utensils, BookOpen, Briefcase, BarChart, Server, 
   PenTool, Database, Cpu, Monitor, TrendingUp,
   Lock, ChevronRight, Loader, Construction,
-  XCircle, CheckCircle 
+  XCircle, CheckCircle, ExternalLink, CreditCard, Gift,
+  EyeOff, Phone, MapPin
 } from 'lucide-react';
 
 // --- Interfaces & Types ---
@@ -17,6 +18,7 @@ type PageType = 'home' | 'services' | 'portfolio' | 'about' | 'contact' | 'book'
 
 interface PageProps {
   setPage: (page: PageType) => void;
+  targetSection?: string | null; // Added for deep linking
 }
 
 interface ButtonProps {
@@ -28,154 +30,25 @@ interface ButtonProps {
   disabled?: boolean;
 }
 
-interface AddOnData {
-  name: string;
-  desc: string;
-  price: string;
-}
-
-// --- Constants & Data ---
-
-const ADD_ON_CATEGORIES = [
-  { id: 'web', label: 'Website & Design' },
-  { id: 'seo', label: 'SEO & Marketing' },
-  { id: 'social', label: 'Social Media & Content' },
-  { id: 'auto', label: 'Automation & Tech' },
-  { id: 'maint', label: 'Maintenance & Security' },
-  { id: 'premium', label: 'Premium / Special Services' }
-] as const;
-
-const ADD_ONS_DATA: Record<string, AddOnData[]> = {
-  web: [
-    { name: 'Extra Page', desc: 'Add 1 additional page to your website', price: '$25' },
-    { name: 'Landing Page', desc: 'Campaign-specific page', price: '$50' },
-    { name: 'Custom Graphics', desc: 'Icons, banners, small illustrations', price: '$30–$80' },
-    { name: 'Logo / Branding Kit', desc: 'Simple logo + color/font setup', price: '$80–$150' },
-    { name: 'Website Redesign', desc: 'Minor website revamp', price: '$100–$200' }
-  ],
-  seo: [
-    { name: 'SEO Audit & Fixes', desc: 'Basic technical SEO + corrections', price: '$50–$100' },
-    { name: 'Local SEO Setup', desc: 'Google My Business + citations', price: '$30–$80' },
-    { name: 'Keyword Research', desc: 'Competitor + keyword analysis', price: '$40–$80' },
-    { name: 'Content Writing', desc: '1 page or blog post', price: '$25–$50' },
-    { name: 'Monthly SEO Report', desc: 'Track performance for 1 month', price: '$25' }
-  ],
-  social: [
-    { name: 'Extra Posts', desc: '+5 posts/month', price: '$25' },
-    { name: 'Short Videos / Reels', desc: 'Social media-ready clips', price: '$30–$70' },
-    { name: 'Ad Graphics', desc: 'Social media ad images', price: '$40–$80' },
-    { name: 'Branding Templates', desc: 'Post templates', price: '$25–$50' },
-    { name: 'Monthly Analytics', desc: 'Social media performance', price: '$25' }
-  ],
-  auto: [
-    { name: 'Email Automation', desc: 'Welcome/follow-up sequence', price: '$40–$80' },
-    { name: 'WhatsApp Automation', desc: 'Auto-replies & workflows', price: '$30–$60' },
-    { name: 'Booking System Setup', desc: 'Appointment scheduler', price: '$50–$100' },
-    { name: 'CRM Integration', desc: 'Basic lead tracking', price: '$80–$150' },
-    { name: 'E-commerce Setup', desc: 'Small Shopify / WooCommerce store', price: '$100–$200' }
-  ],
-  maint: [
-    { name: 'Extra Security Monitoring', desc: 'Advanced monitoring', price: '$15–$25/mo' },
-    { name: 'Speed Optimisation', desc: 'Page load & performance boost', price: '$30–$80' },
-    { name: 'Backup Setup', desc: 'Full backups & monthly service', price: '$15–$30' },
-    { name: 'Website Health Check', desc: 'Quarterly review', price: '$25' }
-  ],
-  premium: [
-    { name: 'Custom Animations', desc: 'Interactive site elements', price: '$40–$80' },
-    { name: 'Multilingual Setup', desc: 'Add extra languages', price: '$80–$150' },
-    { name: 'Photo/Video Editing', desc: 'Website or social media', price: '$25–$60' },
-    { name: 'Premium Stock Media', desc: 'Images / videos purchased', price: '$10–$30' },
-    { name: 'Consulting / Strategy Call', desc: 'Digital strategy session', price: '$25–$50' }
-  ]
-};
-
-const PACKAGES = [
-  {
-    name: 'Starter',
-    price: '$35',
-    period: '/mo',
-    desc: 'Perfect for: New businesses, tradies, home-run setups',
-    features: [
-      '1-page modern website', 
-      'Basic SEO setup', 
-      'Mobile-responsive layout', 
-      'Basic speed optimisation', 
-      'WhatsApp contact button',
-      'Email support'
-    ],
-    highlight: false,
-  },
-  {
-    name: 'Growth',
-    price: '$50',
-    period: '/mo',
-    desc: 'Perfect for: Growing businesses needing consistent online presence',
-    features: [
-      '1–3 page website', 
-      '2 website changes/mo', 
-      'Basic SEO', 
-      'Security monitoring', 
-      'Social media (2 posts/wk)',
-      'Priority email support'
-    ],
-    highlight: true,
-  },
-  {
-    name: 'Pro',
-    price: '$70',
-    period: '/mo',
-    desc: 'Perfect for: Businesses wanting better SEO & multi-platform social media',
-    features: [
-      '3–5 page website', 
-      'Advanced SEO', 
-      '5 changes/month', 
-      'Multi-platform social', 
-      'Security monitoring',
-      'WhatsApp automation'
-    ],
-    highlight: false,
-  },
-  {
-    name: 'Elite',
-    price: '$100',
-    period: '/mo',
-    desc: 'Perfect for: Businesses wanting full digital management',
-    features: [
-      'Full custom website', 
-      'Unlimited changes', 
-      'Complete social media', 
-      'Branding kit', 
-      'Email + WhatsApp auto',
-      'Lead tracking system'
-    ],
-    highlight: false,
-  },
-];
-
-const TESTIMONIALS = [
-  { id: 1, name: "Sarah J.", role: "Bakery Owner", text: "Build50 transformed our online presence. Orders are up 40%!" },
-  { id: 2, name: "Mike T.", role: "Personal Trainer", text: "The monthly support is a lifesaver. I focus on training, they handle the web." },
-];
-
 // --- Components ---
 
 const BrandLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
   <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M20 85V55H35V85H20Z" className="fill-slate-800 dark:fill-white" />
-    <path d="M42.5 85V40H57.5V85H42.5Z" className="fill-slate-800 dark:fill-white" />
-    <path d="M65 85V25H80V85H65Z" className="fill-slate-800 dark:fill-white" />
-    <path d="M10 60 L35 35 L50 50 L85 15" stroke="#3B82F6" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M85 15 L70 15 M85 15 L85 30" stroke="#3B82F6" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M20 85V55H35V85H20Z" className="fill-neutral-900 dark:fill-white" />
+    <path d="M42.5 85V40H57.5V85H42.5Z" className="fill-neutral-900 dark:fill-white" />
+    <path d="M65 85V25H80V85H65Z" className="fill-neutral-900 dark:fill-white" />
+    <path d="M10 60 L35 35 L50 50 L85 15" stroke="#7c3aed" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M85 15 L70 15 M85 15 L85 30" stroke="#7c3aed" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const Button = ({ children, variant = 'primary', className = '', onClick, type = 'button', disabled = false }: ButtonProps) => {
-  const baseStyle = "px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+  const baseStyle = "px-6 py-3 rounded-none font-bold uppercase tracking-wide text-sm transition-all duration-200 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border";
   
   const variants: Record<string, string> = {
-    primary: "bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-500/30",
-    secondary: "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700",
-    outline: "border-2 border-purple-600 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20",
+    primary: "bg-violet-600 hover:bg-violet-700 border-violet-600 text-white shadow-lg shadow-violet-900/20",
+    secondary: "bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-900",
+    outline: "border-violet-600 text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20",
   };
 
   return (
@@ -186,16 +59,16 @@ const Button = ({ children, variant = 'primary', className = '', onClick, type =
 };
 
 const Section = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <section className={`py-16 md:py-24 px-6 md:px-12 max-w-7xl mx-auto ${className}`}>
+  <section className={`py-16 md:py-32 px-6 md:px-12 max-w-7xl mx-auto ${className}`}>
     {children}
   </section>
 );
 
 const Card = ({ children, className = "", highlight = false }: { children: React.ReactNode; className?: string; highlight?: boolean }) => (
-  <div className={`p-6 rounded-2xl transition-all duration-300 ${
+  <div className={`p-8 rounded-none transition-all duration-300 ${
     highlight 
-      ? 'bg-white dark:bg-slate-800 ring-2 ring-purple-500 shadow-xl shadow-purple-500/20 scale-105 z-10' 
-      : 'bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:shadow-lg'
+      ? 'bg-white dark:bg-neutral-900 ring-1 ring-violet-500 shadow-2xl shadow-violet-500/10 z-10' 
+      : 'bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 hover:border-violet-500/50'
     } ${className}`}>
     {children}
   </div>
@@ -206,103 +79,57 @@ const Card = ({ children, className = "", highlight = false }: { children: React
 const Home = ({ setPage }: PageProps) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
     
-    {/* 1. New Hero Section */}
-    <section className="relative pt-32 pb-24 px-6 flex flex-col items-center text-center overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-100 via-transparent to-transparent dark:from-purple-900/30"></div>
+    {/* 1. Agency Hero Section */}
+    <section className="relative pt-32 md:pt-40 pb-20 md:pb-32 px-6 flex flex-col items-center text-center overflow-hidden bg-white dark:bg-black">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-100 via-transparent to-transparent dark:from-neutral-800/20"></div>
       
-      <div className="absolute top-20 right-[10%] w-64 h-64 bg-purple-400/10 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-20 left-[10%] w-48 h-48 bg-blue-400/10 rounded-full blur-3xl animate-pulse delay-700"></div>
+      {/* Abstract Grid Background */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
 
       <motion.div 
-        initial={{ y: 20, opacity: 0 }} 
+        initial={{ y: 30, opacity: 0 }} 
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-4xl relative z-10"
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="max-w-5xl relative z-10"
       >
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-full text-sm font-bold text-slate-800 dark:text-slate-200 mb-8 shadow-sm">
-          <Star className="w-4 h-4 text-purple-500 fill-purple-500" /> Trusted by Australian Businesses
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-xs font-mono uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-8">
+          <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></span> Melbourne Based Agency
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 dark:text-white mb-6 leading-tight">
-          Helping Australian <br className="hidden md:block"/> Small Businesses <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-500">Grow Online</span>
+        <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter text-neutral-900 dark:text-white mb-8 leading-[0.9]">
+          WE BUILD <br className="hidden md:block"/>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-500">DIGITAL EMPIRES</span>
         </h1>
         
-        <p className="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Modern websites, SEO, social media, and digital automation — designed to make your business thrive without the agency price tag.
+        <p className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed px-4">
+          Premium web development & automation for Australian businesses ready to scale. No fluff. Just results.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button onClick={() => setPage('book')} className="w-full sm:w-auto h-14 text-lg">
-            Book Free Consult
+        <div className="flex flex-col sm:flex-row gap-0 justify-center items-center border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-2 w-full sm:w-fit mx-auto shadow-xl">
+          <Button onClick={() => setPage('book')} className="w-full sm:w-auto h-12 text-base border-0">
+            Start Project
           </Button>
-          <Button variant="secondary" onClick={() => window.open('https://wa.me/61400123456')} className="w-full sm:w-auto h-14 text-lg">
-            <MessageCircle className="w-5 h-5" /> WhatsApp Us
+          <Button variant="secondary" onClick={() => window.open('https://wa.me/61400123456')} className="w-full sm:w-auto h-12 text-base border-0">
+            WhatsApp
           </Button>
-        </div>
-
-        <div className="mt-16 relative w-full max-w-3xl mx-auto h-[300px] md:h-[400px]">
-          <motion.div 
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="absolute inset-x-0 bottom-0 top-10 bg-slate-900 rounded-t-2xl border-x-4 border-t-4 border-slate-800 shadow-2xl overflow-hidden"
-          >
-             <div className="w-full h-full bg-slate-800 flex items-center justify-center text-slate-600">
-               <div className="w-full h-full bg-slate-900 relative p-4">
-                 <div className="w-full h-8 bg-slate-800 rounded mb-4 flex items-center px-4 gap-2">
-                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                 </div>
-                 <div className="w-2/3 h-4 bg-slate-700 rounded mb-2"></div>
-                 <div className="w-1/2 h-4 bg-slate-700 rounded mb-8"></div>
-                 <div className="grid grid-cols-2 gap-4">
-                   <div className="h-24 bg-slate-800 rounded"></div>
-                   <div className="h-24 bg-slate-800 rounded"></div>
-                 </div>
-               </div>
-             </div>
-          </motion.div>
-          <motion.div 
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="absolute -right-4 md:-right-12 bottom-0 w-24 md:w-32 h-48 md:h-64 bg-slate-900 rounded-2xl border-4 border-slate-800 shadow-xl overflow-hidden"
-          >
-             <div className="w-full h-full bg-slate-800 flex flex-col p-2 gap-2">
-               <div className="w-full h-20 bg-purple-600/20 rounded"></div>
-               <div className="w-full h-4 bg-slate-700 rounded"></div>
-               <div className="w-3/4 h-4 bg-slate-700 rounded"></div>
-             </div>
-          </motion.div>
         </div>
       </motion.div>
     </section>
 
-    {/* 2. Why Build50 / Stats */}
-    <div className="bg-white dark:bg-slate-900 py-12 border-y border-slate-100 dark:border-slate-800">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+    {/* 2. Stats Strip */}
+    <div className="bg-neutral-50 dark:bg-neutral-950 border-y border-neutral-200 dark:border-neutral-900">
+      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-neutral-200 dark:divide-neutral-900">
         {[
-          { icon: Zap, text: "Fast delivery (7–14 days)" },
-          { icon: MessageCircle, text: "Direct WhatsApp support" },
-          { icon: Lock, text: "Built-in security & backups" },
-          { icon: TrendingUp, text: "SEO-ready structure" }
+          { label: "Turnaround", val: "7-14 DAYS" },
+          { label: "Support", val: "LOCAL AUS" },
+          { label: "Security", val: "ENTERPRISE" },
+          { label: "Growth", val: "SEO READY" }
         ].map((item, i) => (
-          <motion.div 
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="flex flex-col items-center gap-3"
-          >
-            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-full flex items-center justify-center shadow-sm">
-               <item.icon className="w-6 h-6" />
-            </div>
-            <div className="font-bold text-slate-900 dark:text-white text-sm md:text-base max-w-[160px] mx-auto">
-              {item.text}
-            </div>
-          </motion.div>
+          <div key={i} className="py-8 md:py-12 px-6 text-center">
+            <div className="text-xs md:text-sm font-mono text-neutral-500 uppercase tracking-widest mb-2">{item.label}</div>
+            <div className="text-lg md:text-2xl font-black text-neutral-900 dark:text-white">{item.val}</div>
+          </div>
         ))}
       </div>
     </div>
@@ -312,13 +139,13 @@ const Home = ({ setPage }: PageProps) => (
       <div className="grid md:grid-cols-2 gap-12 lg:gap-24 items-center">
         {/* Left: Problem */}
         <div>
-          <h2 className="text-3xl font-bold mb-8 text-slate-900 dark:text-white">Struggling to grow online?</h2>
-          <div className="space-y-6">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-neutral-900 dark:text-white tracking-tight">The Agency Gap.</h2>
+          <div className="space-y-6 md:space-y-8">
             {[
-              "Website looks outdated or doesn't work on mobile",
-              "No time to post on social media consistently",
-              "Paying too much for agencies with slow service",
-              "Confused by SEO, domains, and tech jargon"
+              "Agencies charging $10k+ for basic sites.",
+              "DIY builders that look cheap and break.",
+              "No support when things go wrong.",
+              "Confusing tech jargon used to upsell."
             ].map((prob, i) => (
               <motion.div 
                 key={i}
@@ -326,26 +153,27 @@ const Home = ({ setPage }: PageProps) => (
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="flex items-center gap-4 text-slate-600 dark:text-slate-400"
+                className="flex items-start gap-4 text-neutral-600 dark:text-neutral-400 group"
               >
-                <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center shrink-0">
-                  <XCircle className="w-5 h-5 text-red-500" />
+                <div className="mt-1 w-6 h-6 border border-neutral-300 dark:border-neutral-700 flex items-center justify-center shrink-0 group-hover:border-red-500 transition-colors">
+                  <X className="w-3 h-3 text-neutral-400 group-hover:text-red-500" />
                 </div>
-                <span className="font-medium">{prob}</span>
+                <span className="text-base md:text-lg">{prob}</span>
               </motion.div>
             ))}
           </div>
         </div>
 
         {/* Right: Solution */}
-        <div className="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-3xl border border-slate-100 dark:border-slate-700">
-          <h2 className="text-3xl font-bold mb-8 text-purple-600">The Build50 Solution</h2>
-          <div className="space-y-6">
+        <div className="bg-neutral-900 text-white p-8 md:p-12 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-violet-600 blur-[100px] opacity-50"></div>
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 relative z-10">The Build50 Standard</h2>
+          <div className="space-y-6 relative z-10">
             {[
-              "Modern, fast websites built in 7 days",
-              "Social media managed for you automatically",
-              "Fixed monthly pricing — no hidden fees",
-              "We handle all the tech, hosting & security"
+              "Fixed pricing. No surprises.",
+              "Enterprise-grade tech stack.",
+              "Designed to convert traffic.",
+              "Managed for you monthly."
             ].map((sol, i) => (
               <motion.div 
                 key={i}
@@ -353,40 +181,38 @@ const Home = ({ setPage }: PageProps) => (
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="flex items-center gap-4 text-slate-700 dark:text-slate-200"
+                className="flex items-center gap-4"
               >
-                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center shrink-0">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                </div>
-                <span className="font-bold">{sol}</span>
+                <CheckCircle className="w-5 h-5 text-violet-500" />
+                <span className="font-bold text-base md:text-lg">{sol}</span>
               </motion.div>
             ))}
           </div>
-          <div className="mt-10">
-            <Button className="w-full" onClick={() => setPage('services')}>See How We Can Help</Button>
+          <div className="mt-12">
+            <Button variant="primary" className="w-full border-0" onClick={() => setPage('services')}>View Capabilities</Button>
           </div>
         </div>
       </div>
     </Section>
 
-    {/* 4. Quick Services Strip */}
-    <Section className="bg-slate-900 text-white rounded-3xl relative overflow-hidden">
-      <div className="absolute top-0 right-0 p-32 bg-purple-600/20 blur-3xl rounded-full pointer-events-none"></div>
-      
-      <div className="relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-          <h2 className="text-3xl font-bold">Everything You Need</h2>
-          <button onClick={() => setPage('services')} className="text-purple-400 hover:text-white transition-colors flex items-center gap-2 font-medium">
-            View all services <ArrowRight className="w-4 h-4"/>
+    {/* 4. Services Grid */}
+    <Section className="bg-neutral-100 dark:bg-neutral-900/30">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 md:mb-16 gap-4">
+          <div>
+            <div className="text-violet-600 font-bold tracking-widest text-sm mb-2">CAPABILITIES</div>
+            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">Full Cycle Digital.</h2>
+          </div>
+          <button onClick={() => setPage('services')} className="text-neutral-900 dark:text-white hover:text-violet-600 transition-colors flex items-center gap-2 font-bold border-b-2 border-transparent hover:border-violet-600 pb-1">
+            Explore Services <ArrowRight className="w-4 h-4"/>
           </button>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-1">
           {[
-            { icon: Globe, title: "Websites", desc: "Modern, responsive, animated" },
-            { icon: TrendingUp, title: "SEO", desc: "Rank higher and attract clients" },
-            { icon: Smartphone, title: "Social Media", desc: "Stay consistent without stress" },
-            { icon: Zap, title: "Automation", desc: "Save time with smart workflows" }
+            { icon: Globe, title: "Websites", desc: "High-performance React builds." },
+            { icon: TrendingUp, title: "SEO", desc: "Technical & Content strategy." },
+            { icon: Smartphone, title: "Social", desc: "Multi-channel management." },
+            { icon: Zap, title: "Automation", desc: "CRM & Workflow logic." }
           ].map((srv, i) => (
             <motion.div 
               key={i}
@@ -394,373 +220,402 @@ const Home = ({ setPage }: PageProps) => (
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white/10 backdrop-blur-sm border border-white/10 p-6 rounded-2xl hover:bg-white/20 transition-colors cursor-pointer"
+              className="bg-white dark:bg-black p-8 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors cursor-pointer group border border-neutral-200 dark:border-neutral-800"
               onClick={() => setPage('services')}
             >
-              <srv.icon className="w-8 h-8 text-purple-400 mb-4" />
+              <srv.icon className="w-8 h-8 text-neutral-400 group-hover:text-violet-600 mb-6 transition-colors" />
               <h3 className="font-bold text-xl mb-2">{srv.title}</h3>
-              <p className="text-slate-400 text-sm">{srv.desc}</p>
+              <p className="text-neutral-500 text-sm">{srv.desc}</p>
             </motion.div>
           ))}
         </div>
-      </div>
     </Section>
 
-    {/* 5. Before & After Transformation */}
-    <Section>
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-4 text-slate-900 dark:text-white">Before & After Using Build50</h2>
-        <p className="text-slate-500">See the difference a professional digital system makes.</p>
-      </div>
-      
-      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        {/* Before */}
-        <motion.div 
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          className="bg-red-50 dark:bg-red-900/10 p-8 rounded-2xl border border-red-100 dark:border-red-900/30"
-        >
-          <h3 className="text-xl font-bold text-red-600 dark:text-red-400 mb-6 flex items-center gap-2">
-            <XCircle className="w-6 h-6" /> Before Build50
-          </h3>
-          <ul className="space-y-4">
-            {["Outdated website", "No Google visibility", "Low enquiry rate", "Manual follow-ups", "Inconsistent branding"].map((item, i) => (
-              <li key={i} className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
-                <X className="w-5 h-5 text-red-400 shrink-0" /> {item}
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-
-        {/* After */}
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          className="bg-green-50 dark:bg-green-900/10 p-8 rounded-2xl border border-green-100 dark:border-green-900/30 relative overflow-hidden"
-        >
-          <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">RESULTS</div>
-          <h3 className="text-xl font-bold text-green-600 dark:text-green-400 mb-6 flex items-center gap-2">
-            <CheckCircle className="w-6 h-6" /> After Build50
-          </h3>
-          <ul className="space-y-4">
-            {["Fast modern website", "SEO-ready structure", "Lead capture systems", "Automated responses", "Professional branding"].map((item, i) => (
-              <li key={i} className="flex items-center gap-3 text-slate-700 dark:text-slate-200 font-medium">
-                <Check className="w-5 h-5 text-green-500 shrink-0" /> {item}
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-      </div>
-    </Section>
-
-    {/* 6. Authority Builder */}
-    <Section className="bg-slate-50 dark:bg-slate-900/50 rounded-3xl">
-      <div className="max-w-3xl mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-10 text-slate-900 dark:text-white">What Most Agencies Won’t Tell You</h2>
-        <div className="space-y-4 text-left mb-10">
-          {[
-            "You don’t need a $5,000 website to grow.",
-            "Fancy designs mean nothing without SEO.",
-            "Posting daily on social media is unnecessary.",
-            "Speed and structure matter more than visuals.",
-            "Automation saves more money than ads."
-          ].map((truth, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-start gap-4"
-            >
-              <div className="w-6 h-6 mt-0.5 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center shrink-0 text-purple-600 font-bold text-sm">!</div>
-              <span className="text-slate-700 dark:text-slate-200 font-medium">{truth}</span>
-            </motion.div>
-          ))}
+    {/* 5. CTA */}
+    <div className="bg-black text-white py-20 md:py-32 px-6 text-center relative overflow-hidden">
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+      <div className="relative z-10 max-w-3xl mx-auto">
+        <h2 className="text-4xl md:text-7xl font-bold mb-8 tracking-tighter">READY TO SCALE?</h2>
+        <p className="text-lg md:text-xl text-neutral-400 mb-12">Limited slots available for the upcoming month.</p>
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <Button onClick={() => setPage('book')} className="h-16 px-8 text-lg bg-white text-black hover:bg-neutral-200 border-0 w-full sm:w-auto">
+            Book Consultation
+          </Button>
+          <Button variant="outline" onClick={() => window.open('https://wa.me/61400123456')} className="h-16 px-8 text-lg border-white text-white hover:bg-white hover:text-black w-full sm:w-auto">
+            WhatsApp
+          </Button>
         </div>
-        <p className="text-xl text-purple-600 font-bold mb-8">We build only what actually grows your business.</p>
-        <Button onClick={() => setPage('book')} className="mx-auto">Get a Strategy Call</Button>
-      </div>
-    </Section>
-
-    {/* 7. Lead Capture / CTA */}
-    <div className="bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 py-24 px-6">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-4xl font-bold mb-6">Want to Grow Your Business Online?</h2>
-        <p className="text-xl text-slate-600 dark:text-slate-300 mb-10">
-          Slots for next month are filling up fast. Join our list or book a free consultation today!
-        </p>
-        
-        <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-lg mx-auto">
-          <input 
-            type="email" 
-            placeholder="Enter your email" 
-            className="flex-grow p-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 focus:ring-2 focus:ring-purple-500 outline-none"
-          />
-          <Button className="whitespace-nowrap">Get Started</Button>
-        </div>
-        <p className="mt-6 text-sm text-slate-500">
-          Or <button onClick={() => window.open('https://wa.me/61400123456')} className="text-purple-600 font-bold hover:underline">WhatsApp us</button> directly.
-        </p>
       </div>
     </div>
 
   </motion.div>
 );
 
-const Services = ({ setPage }: PageProps) => {
-  const [activeAddOnCategory, setActiveAddOnCategory] = useState<string>('web');
+const Services = ({ setPage, targetSection }: PageProps) => {
+  useEffect(() => {
+    if (targetSection) {
+      const element = document.getElementById(targetSection);
+      if (element) {
+        // Short timeout to ensure DOM is ready and layout is stable
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    } else {
+        window.scrollTo(0, 0);
+    }
+  }, [targetSection]);
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-24 pb-12">
       <Section>
-        {/* Section 1 - Overview */}
-        <div className="text-center max-w-4xl mx-auto mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white">Our Services</h1>
-          <p className="text-2xl text-purple-600 font-medium mb-8">Digital solutions designed to help your business grow.</p>
-          
-          <div className="bg-slate-50 dark:bg-slate-900/50 p-8 rounded-2xl border border-slate-100 dark:border-slate-800">
-            <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
-              At Build50, we offer simple, affordable, Australian-focused digital services that help businesses get online, grow, and scale. 
-              Whether you're just starting or ready for automation, our monthly plans provide everything you need.
-            </p>
+        {/* HERO SECTION */}
+        <div className="text-center max-w-4xl mx-auto mb-20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-black rounded-none text-sm font-bold mb-8 uppercase tracking-wider">
+             <Gift className="w-4 h-4" /> 3 Months FREE Hosting
           </div>
+          <h1 className="text-4xl md:text-7xl font-black mb-6 text-neutral-900 dark:text-white leading-tight tracking-tighter">
+            TRANSPARENT. <br /><span className="text-violet-600">POWERFUL.</span>
+          </h1>
+          <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 mb-10 max-w-2xl mx-auto font-light">
+             Enterprise-grade digital solutions, priced for growth.
+          </p>
         </div>
 
-        {/* Section 2 - Packages */}
-        <h2 className="text-2xl font-bold text-center mb-8">Service Packages</h2>
-        <div className="grid lg:grid-cols-4 gap-6 mb-24">
-          {PACKAGES.map((pkg) => (
-            <Card key={pkg.name} highlight={pkg.highlight} className="flex flex-col relative overflow-hidden">
-              {pkg.highlight && (
-                <div className="absolute top-0 right-0 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
-                  POPULAR
-                </div>
-              )}
-              <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
-              <div className="text-3xl font-bold mb-2 text-slate-900 dark:text-white">
-                {pkg.price}<span className="text-sm text-slate-500 font-normal">{pkg.period}</span>
-              </div>
-              <p className="text-sm text-slate-500 mb-6 italic">{pkg.desc}</p>
-              
-              <div className="flex-grow">
-                <ul className="space-y-4 mb-8">
+        {/* WEBSITE PACKAGES */}
+        <div className="mb-24" id="web-design">
+          <div className="flex items-end gap-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
+             <Globe className="w-8 h-8 text-violet-600" /> 
+             <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight">Web Development</h2>
+          </div>
+          
+          <div className="grid lg:grid-cols-3 gap-0 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black">
+            {[
+              { 
+                name: 'Single Page', 
+                price: '$199', 
+                features: ['1 modern landing page', 'Services section', 'Image gallery', 'Contact form', 'Click-to-call button', 'Google Maps', 'Mobile-responsive', '3 Months FREE Hosting'] 
+              },
+              { 
+                name: 'Multi-Page', 
+                price: '$349', 
+                highlight: true,
+                features: ['3–4 pages (Home, About, Services)', 'Gallery & Testimonials', 'Lead contact form', 'SEO-ready structure', 'Mobile-friendly layout', '3 Months FREE Hosting'] 
+              },
+              { 
+                name: 'Premium', 
+                price: '$549', 
+                features: ['Up to 6 pages', 'Premium layout & animations', 'Advanced lead/quote forms', 'Polished branding & visuals', 'SEO structure', '3 Months FREE Hosting'] 
+              }
+            ].map((pkg, i) => (
+              <div key={pkg.name} className={`p-8 flex flex-col ${pkg.highlight ? 'bg-neutral-50 dark:bg-neutral-900 relative z-10 ring-1 ring-inset ring-violet-500' : 'hover:bg-neutral-50 dark:hover:bg-neutral-900/50'} ${i !== 2 ? 'lg:border-r border-b lg:border-b-0 border-neutral-200 dark:border-neutral-800' : ''}`}>
+                {pkg.highlight && <div className="absolute top-0 right-0 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 uppercase">Recommended</div>}
+                <h3 className="text-lg font-bold mb-2 uppercase tracking-wide text-neutral-500">{pkg.name}</h3>
+                <div className="text-4xl font-black mb-6 text-neutral-900 dark:text-white tracking-tighter">{pkg.price}</div>
+                <ul className="space-y-4 mb-8 flex-grow">
                   {pkg.features.map(f => (
-                    <li key={f} className="flex items-start text-sm gap-3">
-                      <Check className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" /> 
-                      <span className="text-slate-700 dark:text-slate-300 leading-tight">{f}</span>
+                    <li key={f} className="flex items-start text-sm gap-3 text-neutral-600 dark:text-neutral-400">
+                      <Check className="w-4 h-4 text-violet-600 mt-0.5 shrink-0" /> {f}
                     </li>
                   ))}
                 </ul>
+                <Button variant={pkg.highlight ? 'primary' : 'outline'} className="w-full" onClick={() => setPage('contact')}>Select Plan</Button>
               </div>
-              
-              <Button variant={pkg.highlight ? 'primary' : 'outline'} className="w-full" onClick={() => setPage('contact')}>
-                Choose {pkg.name}
-              </Button>
-            </Card>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* Section 2.5 - One-Off Add-Ons (Interactive) */}
+        {/* ADVANCED SOLUTIONS */}
         <div className="mb-24">
-           <h2 className="text-3xl font-bold text-center mb-4">One-Off Add-Ons</h2>
-           <p className="text-center text-slate-500 mb-12">Need something extra? Choose from our tailored one-time services.</p>
-           
-           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-             {/* Left Sidebar / Tabs */}
-             <div className="w-full lg:w-1/4 flex lg:flex-col gap-2 overflow-x-auto pb-4 lg:pb-0 scrollbar-hide">
-               {ADD_ON_CATEGORIES.map(cat => (
-                 <motion.button
-                   key={cat.id}
-                   onClick={() => setActiveAddOnCategory(cat.id)}
-                   whileHover={{ scale: 1.02, x: 4, backgroundColor: activeAddOnCategory === cat.id ? undefined : "rgba(124, 58, 237, 0.05)" }}
-                   whileTap={{ scale: 0.98 }}
-                   className={`px-4 py-4 rounded-xl text-left font-medium transition-all flex items-center justify-between group whitespace-nowrap lg:whitespace-normal flex-shrink-0 ${
-                     activeAddOnCategory === cat.id 
-                       ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30' 
-                       : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-transparent dark:border-transparent'
-                   }`}
-                 >
-                   {cat.label}
-                   <ChevronRight className={`w-4 h-4 hidden lg:block transition-transform ${activeAddOnCategory === cat.id ? 'translate-x-1' : 'opacity-0 group-hover:opacity-50'}`} />
-                 </motion.button>
-               ))}
-             </div>
+           <div className="flex items-end gap-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
+             <ShoppingBag className="w-8 h-8 text-violet-600" /> 
+             <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight">Advanced Solutions</h2>
+           </div>
+           <div className="grid md:grid-cols-2 gap-8">
+              <Card className="hover:border-violet-600 transition-colors">
+                 <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-xl font-bold uppercase">E-Commerce</h3>
+                    <span className="text-violet-600 font-mono text-sm bg-violet-50 dark:bg-violet-900/20 px-3 py-1">CUSTOM QUOTE</span>
+                 </div>
+                 <p className="text-neutral-500 text-sm mb-6">Pricing depends on products, payment gateways, inventory systems, and overall complexity.</p>
+                 <Button variant="outline" className="w-full" onClick={() => setPage('contact')}>Request Quote</Button>
+              </Card>
+              <Card className="hover:border-violet-600 transition-colors">
+                 <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-xl font-bold uppercase">Restaurant</h3>
+                    <span className="text-2xl font-black text-neutral-900 dark:text-white">$599</span>
+                 </div>
+                 <ul className="space-y-2 mb-6 text-sm text-neutral-600 dark:text-neutral-300">
+                    <li className="flex gap-2"><Check className="w-4 h-4 text-violet-500"/> Digital menu & Gallery</li>
+                    <li className="flex gap-2"><Check className="w-4 h-4 text-violet-500"/> Contact & location map</li>
+                    <li className="flex gap-2"><Check className="w-4 h-4 text-violet-500"/> Delivery links & Mobile optimized</li>
+                    <li className="flex gap-2"><Check className="w-4 h-4 text-violet-500"/> 3 Months FREE Hosting</li>
+                 </ul>
+                 <Button variant="outline" className="w-full" onClick={() => setPage('contact')}>Get Started</Button>
+              </Card>
+           </div>
+        </div>
 
-             {/* Right Content Panel */}
-             <div className="w-full lg:w-3/4 bg-slate-50 dark:bg-slate-900/50 rounded-3xl p-6 md:p-8 min-h-[400px] relative overflow-hidden border border-slate-100 dark:border-slate-800">
-               <AnimatePresence mode="wait">
-                 <motion.div
-                   key={activeAddOnCategory}
-                   initial={{ opacity: 0, x: 50 }}
-                   animate={{ opacity: 1, x: 0 }}
-                   exit={{ opacity: 0, x: 50 }}
-                   transition={{ duration: 0.4, ease: "easeOut" }}
-                 >
-                   <div className="grid md:grid-cols-2 gap-4">
-                     {ADD_ONS_DATA[activeAddOnCategory]?.map((addon, index) => (
-                       <motion.div 
-                         key={index} 
-                         initial={{ opacity: 0, y: 20 }}
-                         animate={{ opacity: 1, y: 0 }}
-                         transition={{ delay: index * 0.08, duration: 0.3 }}
-                         whileHover={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)" }}
-                         className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-purple-500 dark:hover:border-purple-500 transition-colors group cursor-default"
-                       >
-                         <div className="flex justify-between items-start mb-2">
-                           <h4 className="font-bold text-lg">{addon.name}</h4>
-                           <span className="bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs font-bold px-2 py-1 rounded whitespace-nowrap ml-2">
-                             {addon.price}
-                           </span>
-                         </div>
-                         <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{addon.desc}</p>
-                         <button 
-                           onClick={() => setPage('contact')}
-                           className="text-sm font-medium text-purple-600 hover:text-purple-700 flex items-center gap-1 group-hover:gap-2 transition-all"
-                         >
-                           Inquire <ArrowRight className="w-3 h-3" />
-                         </button>
-                       </motion.div>
-                     ))}
-                   </div>
-                 </motion.div>
-               </AnimatePresence>
+        {/* APP DEVELOPMENT */}
+        <div className="mb-24" id="app-dev">
+           <div className="max-w-3xl mx-auto">
+             <div className="p-8 md:p-12 bg-black text-white text-center relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-violet-900/50 blur-[80px]"></div>
+                <Smartphone className="w-12 h-12 text-violet-500 mx-auto mb-4 relative z-10" />
+                <h3 className="text-2xl font-bold mb-2 uppercase relative z-10">Custom Mobile App Development</h3>
+                <div className="text-3xl md:text-5xl font-black mb-4 relative z-10 text-white flex flex-wrap items-baseline justify-center gap-2">
+                  <span className="text-xl md:text-2xl font-normal text-neutral-400">Starting at</span> $6,500
+                </div>
+                <p className="text-neutral-400 mb-8 relative z-10 max-w-2xl mx-auto text-sm md:text-base">
+                  One of the most affordable full-scale app development solutions in the industry, without compromising on quality, performance, or security.
+                </p>
+                <Button className="w-full md:w-auto mx-auto border-white text-white hover:bg-white hover:text-black relative z-10" onClick={() => setPage('contact')}>Discuss Your App Idea</Button>
              </div>
            </div>
         </div>
 
-        {/* Section 3 - What We Do */}
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">What We Do</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-            {/* Web Development */}
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition-all hover:shadow-lg group">
-               <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                 <Globe className="w-6 h-6" />
-               </div>
-               <h3 className="text-xl font-bold mb-2">Website Development</h3>
-               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                 Fast, modern, animated websites built with React. Includes dark/light mode and mobile-first design.
-               </p>
-            </div>
-
-            {/* SEO */}
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition-all hover:shadow-lg group">
-               <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                 <TrendingUp className="w-6 h-6" />
-               </div>
-               <h3 className="text-xl font-bold mb-2">SEO Optimisation</h3>
-               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                 Rank better on Google and attract customers with speed optimisation, schema markup, and keyword strategy.
-               </p>
-            </div>
-
-            {/* Branding */}
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition-all hover:shadow-lg group">
-               <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900/30 text-pink-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                 <PenTool className="w-6 h-6" />
-               </div>
-               <h3 className="text-xl font-bold mb-2">Branding & Identity</h3>
-               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                 Complete visual identity packages including logo design, colour palettes, fonts, and professional templates.
-               </p>
-            </div>
-
-            {/* Social Media */}
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition-all hover:shadow-lg group">
-               <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                 <Smartphone className="w-6 h-6" />
-               </div>
-               <h3 className="text-xl font-bold mb-2">Social Media Management</h3>
-               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                 Consistent posting, engaging captions, and content strategy to keep your audience growing across platforms.
-               </p>
-            </div>
-
-            {/* Automation */}
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition-all hover:shadow-lg group">
-               <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                 <Zap className="w-6 h-6" />
-               </div>
-               <h3 className="text-xl font-bold mb-2">Business Automation</h3>
-               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                 Save time with auto-emails, WhatsApp auto-responses, lead funnels, and streamlined sales workflows.
-               </p>
-            </div>
-
-            {/* Security */}
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 transition-all hover:shadow-lg group">
-               <div className="w-12 h-12 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                 <Lock className="w-6 h-6" />
-               </div>
-               <h3 className="text-xl font-bold mb-2">Security Monitoring</h3>
-               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                 Sleep easy with daily security checks, automated backups, and protection against online threats.
-               </p>
-            </div>
-
-          </div>
+        {/* WEBSITE CARE */}
+        <div className="mb-24" id="care-plans">
+           <div className="flex items-end gap-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
+             <Shield className="w-8 h-8 text-violet-600" /> 
+             <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight">Care Plans</h2>
+           </div>
+           <div className="grid md:grid-cols-2 gap-6">
+              <Card>
+                 <h3 className="text-xl font-bold mb-2 uppercase">Basic Care</h3>
+                 <div className="text-3xl font-black mb-4 text-neutral-900 dark:text-white">$30<span className="text-sm font-normal text-neutral-500">/mo</span></div>
+                 <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-300 mb-6">
+                    <li>• 2 edits per month</li>
+                    <li>• Updates & Bug fixes</li>
+                    <li>• Priority support</li>
+                    <li>• Hosting included (if site built by us)</li>
+                 </ul>
+                 <Button variant="secondary" className="w-full" onClick={() => setPage('contact')}>Subscribe</Button>
+              </Card>
+              <Card highlight>
+                 <div className="absolute top-0 right-0 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 uppercase">Recommended</div>
+                 <h3 className="text-xl font-bold mb-2 uppercase">Full Care</h3>
+                 <div className="text-3xl font-black mb-4 text-neutral-900 dark:text-white">$60<span className="text-sm font-normal text-neutral-500">/mo</span></div>
+                 <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-300 mb-6">
+                    <li>• Unlimited edits & Updates</li>
+                    <li>• Bug fixes & Priority support</li>
+                    <li>• Hosting included</li>
+                    <li>• Ongoing improvements</li>
+                 </ul>
+                 <Button className="w-full" onClick={() => setPage('contact')}>Subscribe</Button>
+              </Card>
+           </div>
         </div>
+
+        {/* BRANDING & SEO */}
+        <div className="grid md:grid-cols-2 gap-12 mb-24" id="branding">
+           <div>
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 uppercase"><PenTool className="w-6 h-6 text-violet-600" /> Branding</h2>
+              <div className="space-y-4">
+                 <div className="flex justify-between items-center p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+                    <span className="font-bold">Logo Design</span>
+                    <span className="font-mono font-bold text-violet-600">$50</span>
+                 </div>
+                 <div className="p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+                    <div className="flex justify-between items-center mb-2">
+                       <span className="font-bold">Complete Branding Kit</span>
+                       <span className="font-mono font-bold text-violet-600">$129</span>
+                    </div>
+                    <p className="text-xs text-neutral-500">Logo, Colours, Fonts, Email signature, Profile pictures, Banners.</p>
+                 </div>
+              </div>
+           </div>
+           <div>
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 uppercase"><Search className="w-6 h-6 text-violet-600" /> SEO Services</h2>
+              <div className="space-y-4">
+                 <div className="p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+                    <div className="flex justify-between items-center mb-2">
+                       <span className="font-bold">Basic SEO Setup</span>
+                       <span className="font-mono font-bold text-violet-600">$50</span>
+                    </div>
+                    <p className="text-xs text-neutral-500">Meta titles, Local SEO structure, Search engine indexing.</p>
+                 </div>
+                 <div className="p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+                    <div className="flex justify-between items-center mb-2">
+                       <span className="font-bold">Monthly SEO</span>
+                       <span className="font-mono font-bold text-violet-600">$50/mo</span>
+                    </div>
+                    <p className="text-xs text-neutral-500">Keyword tracking, Monthly optimisation, Reporting.</p>
+                 </div>
+              </div>
+           </div>
+        </div>
+
+        {/* ADD-ONS */}
+        <div className="mb-24">
+           <h2 className="text-xl font-bold mb-6 text-center uppercase tracking-widest text-neutral-500">Additional Services</h2>
+           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-neutral-200 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800">
+              {[
+                { name: "Domain Setup", price: "$15", note: "Client pays domain cost" },
+                { name: "Business Email", price: "$50", note: "Professional setup" },
+                { name: "Booking System", price: "$30-$50", note: "Based on complexity" },
+                { name: "Extra Pages", price: "$20-$50", note: "Per additional page" },
+              ].map((addon, i) => (
+                 <div key={i} className="p-6 bg-white dark:bg-neutral-900 text-center">
+                    <div className="font-bold mb-1">{addon.name}</div>
+                    <div className="text-violet-600 font-bold mb-1">{addon.price}</div>
+                    <div className="text-xs text-neutral-500">{addon.note}</div>
+                 </div>
+              ))}
+           </div>
+        </div>
+
+        {/* POLICIES & TERMS */}
+        <div className="grid md:grid-cols-2 gap-8 mb-24">
+           <div className="p-8 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800">
+              <h3 className="text-lg font-bold mb-4 flex items-center gap-2 uppercase"><Server className="w-5 h-5 text-violet-600" /> Hosting Policy</h3>
+              <div className="space-y-4 text-sm text-neutral-700 dark:text-neutral-300">
+                 <p><span className="font-bold text-violet-600">🎁 3 Months FREE Hosting</span> for all simple websites.</p>
+                 <p>After 3 months: <strong>$10/mo</strong> (simple) or <strong>$20/mo</strong> (complex).</p>
+                 <p className="italic text-xs text-neutral-500">Note: Hosting is NOT free for complex systems like E-commerce or Restaurant platforms.</p>
+                 <div className="pt-2 border-t border-neutral-200 dark:border-neutral-800">
+                    <p className="text-xs">Options: Stay with us or use your own provider.</p>
+                 </div>
+              </div>
+           </div>
+           <div className="p-8 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800">
+              <h3 className="text-lg font-bold mb-4 flex items-center gap-2 uppercase"><CreditCard className="w-5 h-5 text-violet-600" /> Payment Terms</h3>
+              <ul className="space-y-3 text-sm text-neutral-700 dark:text-neutral-300">
+                 <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500"/> 50% upfront before work begins</li>
+                 <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500"/> 50% on completion</li>
+                 <li className="pt-2 border-t border-neutral-200 dark:border-neutral-800 flex gap-2 font-bold">
+                    <span className="text-violet-600">ZIP</span> monthly payments available (+8.5% surcharge)
+                 </li>
+              </ul>
+           </div>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center">
+           <Button className="mx-auto h-16 px-10 text-lg" onClick={() => setPage('contact')}>Get Custom Quote</Button>
+        </div>
+
       </Section>
     </motion.div>
   );
 };
 
+// --- Portfolio Component (Updated with blurred Work In Progress style) ---
+const Portfolio = ({ setPage }: PageProps) => (
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-24 pb-12">
+    <Section>
+      <div className="text-center max-w-4xl mx-auto mb-20">
+        <h1 className="text-5xl md:text-7xl font-black mb-6 text-neutral-900 dark:text-white uppercase tracking-tighter">
+          Selected Works
+        </h1>
+        <p className="text-xl text-neutral-500 mb-8 max-w-2xl mx-auto">
+          A showcase of our recent digital deployments.
+        </p>
+      </div>
+      
+      {/* Portfolio Grid */}
+      <div className="grid md:grid-cols-2 gap-8 mb-16">
+         {[
+           "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+           "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+           "https://images.unsplash.com/photo-1481487484168-9b930d5b7d63?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+           "https://images.unsplash.com/photo-1555421689-492a18d9c3ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+         ].map((imgSrc, i) => (
+           <div key={i} className="group relative bg-neutral-100 dark:bg-neutral-800 h-80 overflow-hidden border border-neutral-200 dark:border-neutral-800">
+             {/* The blurred image */}
+             <img 
+               src={imgSrc} 
+               alt="Project" 
+               className="w-full h-full object-cover blur-[12px] scale-110 opacity-60 transition-transform duration-700 group-hover:scale-125"
+             />
+             
+             {/* Overlay Content */}
+             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 z-10">
+               <div className="bg-black/80 backdrop-blur-md px-6 py-3 border border-white/10 flex items-center gap-3">
+                 <EyeOff className="w-4 h-4 text-violet-400" />
+                 <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">
+                   Work In Progress
+                 </span>
+               </div>
+               <p className="text-white/60 text-xs mt-3 uppercase tracking-wider font-medium">Confidential Client</p>
+             </div>
+
+             {/* Hover effect border */}
+             <div className="absolute inset-0 border-2 border-transparent group-hover:border-violet-600 transition-colors duration-300 z-20 pointer-events-none"></div>
+           </div>
+         ))}
+      </div>
+      
+      <div className="bg-neutral-900 text-white p-12 text-center relative overflow-hidden">
+        <div className="relative z-10">
+          <h3 className="text-2xl font-bold mb-4">Want to see our live case studies?</h3>
+          <p className="text-neutral-400 mb-8 max-w-xl mx-auto">
+            Due to NDA agreements with our enterprise clients, some work cannot be displayed publicly. Book a call for a private walkthrough.
+          </p>
+          <Button className="mx-auto bg-white text-black border-0 hover:bg-neutral-200" onClick={() => setPage('book')}>Request Private Portfolio</Button>
+        </div>
+      </div>
+
+    </Section>
+  </motion.div>
+);
+
 const About = ({ setPage }: PageProps) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-24 pb-12">
     
-    {/* 1. Origin & Mission */}
+    {/* 1. New Content Section */}
     <Section>
-      <div className="max-w-5xl mx-auto mb-16">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white">About Build50</h1>
-          <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed">
-             Build50 was created with a simple idea: help Australian small businesses get a modern website without paying agency prices.
+      <div className="max-w-4xl mx-auto mb-20">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl md:text-7xl font-black mb-8 text-neutral-900 dark:text-white uppercase tracking-tighter">About Build50</h1>
+          <h2 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-neutral-200 mb-6 leading-tight">
+            Bridging the gap between high‑priced agencies and low‑quality DIY solutions.
+          </h2>
+          <p className="text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed font-light">
+             At <span className="font-bold text-neutral-900 dark:text-white">Build50</span>, we help businesses grow online with <span className="italic">fast, beautiful, and affordable digital solutions</span> — without the stress, hidden fees, or confusing tech jargon. We exist for business owners who want real results without paying $10,000+ and waiting months for delivery.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-start">
-           {/* Origin */}
-           <div>
-             <h3 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-4">
-               The Origin
-             </h3>
-             <p className="text-lg text-slate-600 dark:text-slate-300 mb-8 leading-relaxed">
-               As a founder who grew up around hardworking tradespeople, retail owners, and local services, I saw one thing in common.
-             </p>
-             <blockquote className="border-l-4 border-purple-600 pl-6 py-2">
-               <p className="text-xl font-medium text-slate-800 dark:text-slate-200 italic leading-relaxed">
-                 "Everyone wants more customers, but no one has the time or budget for a $5,000+ agency website."
+        <div className="bg-neutral-50 dark:bg-neutral-900 p-8 md:p-12 border border-neutral-200 dark:border-neutral-800 relative overflow-hidden">
+           {/* Decorative elements */}
+           <div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+           
+           <h3 className="text-3xl font-black mb-8 uppercase tracking-tight relative z-10">Why It’s Called Build50</h3>
+           <p className="text-lg text-neutral-600 dark:text-neutral-300 mb-8 font-medium relative z-10">
+             The name <span className="text-violet-600">Build50</span> represents our core belief: <br/>
+             <span className="italic">Build smarter. Build faster. Build for growth.</span>
+           </p>
+           
+           <div className="grid md:grid-cols-2 gap-8 relative z-10">
+             <div>
+               <h4 className="text-xl font-bold mb-2 uppercase text-neutral-900 dark:text-white border-l-4 border-violet-600 pl-4">"Build"</h4>
+               <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed pl-5">
+                 Reflects exactly what we do — we build websites, brands, systems, and digital experiences that power real businesses.
                </p>
-             </blockquote>
+             </div>
+             <div>
+               <h4 className="text-xl font-bold mb-2 uppercase text-neutral-900 dark:text-white border-l-4 border-violet-600 pl-4">"50"</h4>
+               <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed pl-5">
+                 Symbolises speed, efficiency, and value — delivering premium‑quality results at a fraction of traditional agency costs and in a fraction of the time.
+               </p>
+             </div>
            </div>
-
-           {/* Mission */}
-           <div>
-             <h3 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-4">
-               Our Mission
-             </h3>
-             <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
-               To give every Australian business a fast, beautiful, affordable online presence — 
-               without the stress, confusing tech jargon, or massive upfront cost.
-             </p>
-             <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-               We bridge the gap between expensive agencies and low-quality DIY builders by providing fixed-price, subscription websites that grow with you.
+           
+           <div className="mt-10 pt-8 border-t border-neutral-200 dark:border-neutral-800 relative z-10">
+             <p className="text-lg font-bold text-neutral-900 dark:text-white text-center">
+               Together, Build50 stands for building powerful digital solutions at <span className="text-violet-600">50% faster speed</span> and smarter value for growing businesses.
              </p>
            </div>
         </div>
       </div>
     </Section>
 
-    {/* 2. How We Help & 3. What We Do */}
-    <Section className="bg-slate-50 dark:bg-slate-900/50 rounded-3xl">
+    {/* 2. How We Help */}
+    <Section className="bg-neutral-50 dark:bg-neutral-900/30">
        <div className="grid lg:grid-cols-2 gap-16">
          <div>
-            <h2 className="text-3xl font-bold mb-8 flex items-center gap-3">
-              <Heart className="w-8 h-8 text-purple-500" /> How We Help
+            <h2 className="text-3xl font-bold mb-8 flex items-center gap-3 uppercase">
+              <Heart className="w-8 h-8 text-violet-600" /> How We Help
             </h2>
             <ul className="space-y-6">
               {[
@@ -770,18 +625,18 @@ const About = ({ setPage }: PageProps) => (
                 "Automation that saves hours of time each week",
                 "Monthly support so your site never becomes “outdated” again"
               ].map((item, i) => (
-                <li key={i} className="flex items-start gap-4 p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm">
-                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full flex items-center justify-center shrink-0">
-                    <Check className="w-5 h-5" />
+                <li key={i} className="flex items-start gap-4 p-6 bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800">
+                  <div className="w-6 h-6 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full flex items-center justify-center shrink-0">
+                    <Check className="w-4 h-4" />
                   </div>
-                  <span className="text-slate-700 dark:text-slate-200 font-medium pt-1">{item}</span>
+                  <span className="text-neutral-700 dark:text-neutral-200 font-medium pt-1">{item}</span>
                 </li>
               ))}
             </ul>
          </div>
          <div>
-            <h2 className="text-3xl font-bold mb-8 flex items-center gap-3">
-              <Briefcase className="w-8 h-8 text-purple-500" /> What We Do
+            <h2 className="text-3xl font-bold mb-8 flex items-center gap-3 uppercase">
+              <Briefcase className="w-8 h-8 text-violet-600" /> What We Do
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
               {[
@@ -792,11 +647,11 @@ const About = ({ setPage }: PageProps) => (
                 { icon: Server, title: "Management", desc: "Changes, updates, maintenance, monitoring, security." },
                 { icon: Clock, title: "Fast Turnaround", desc: "Most builds delivered within 7–14 days." }
               ].map((service, i) => (
-                 <div key={i} className="flex flex-col gap-3 p-5 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 hover:border-purple-200 dark:hover:border-purple-800 transition-colors">
-                    <div className="text-purple-600"><service.icon className="w-6 h-6" /></div>
+                 <div key={i} className="flex flex-col gap-3 p-6 bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800 hover:border-violet-600 transition-colors">
+                    <div className="text-violet-600"><service.icon className="w-6 h-6" /></div>
                     <div>
-                      <h4 className="font-bold mb-1">{service.title}</h4>
-                      <p className="text-sm text-slate-500 leading-snug">{service.desc}</p>
+                      <h4 className="font-bold mb-1 uppercase text-sm">{service.title}</h4>
+                      <p className="text-sm text-neutral-500 leading-snug">{service.desc}</p>
                     </div>
                  </div>
               ))}
@@ -804,235 +659,175 @@ const About = ({ setPage }: PageProps) => (
          </div>
        </div>
     </Section>
-
-    {/* 4. Why Australians Choose Us */}
-    <Section>
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-4">Why Australians Choose Us 🇦🇺</h2>
-        <p className="text-slate-500">Built for the local market, with local values.</p>
-      </div>
-      <div className="grid md:grid-cols-3 gap-6">
-        {[
-          { icon: MessageCircle, title: "Local Support", desc: "We operate on Aussie time, answer fast, and communicate clearly." },
-          { icon: DollarSignIcon, title: "Fixed Pricing", desc: "No hidden fees, no surprises — just predictable monthly plans." }, // Placeholder icon
-          { icon: Zap, title: "Fast Delivery", desc: "Most sites are delivered in 1–2 weeks, not months." },
-          { icon: Users, title: "Real Humans", desc: "No overseas call centres. You speak directly to the person doing the work." },
-          { icon: Heart, title: "Small Biz Friendly", desc: "We understand Aussie small business culture — trust, fairness, straight talk." },
-          { icon: Shield, title: "Secure & Reliable", desc: "Australian hosting partners, fast load times, and security monitoring." }
-        ].map((item, i) => (
-          <Card key={i} className="text-center hover:scale-105">
-             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/50 rounded-full flex items-center justify-center text-purple-600 mx-auto mb-4">
-               <item.icon className="w-6 h-6" />
-             </div>
-             <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-             <p className="text-sm text-slate-500">{item.desc}</p>
-          </Card>
-        ))}
-      </div>
-    </Section>
-
-    {/* 5. Industries */}
-    <Section className="bg-slate-900 text-white rounded-3xl relative overflow-hidden">
-      <div className="absolute top-0 right-0 p-32 bg-purple-600/20 blur-3xl rounded-full pointer-events-none"></div>
-      <div className="relative z-10">
-        <h2 className="text-3xl font-bold mb-10 text-center">Industries We Support</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-           {[
-             { icon: Hammer, name: "Trades" },
-             { icon: Heart, name: "Health" },
-             { icon: ShoppingBag, name: "Retail" },
-             { icon: Utensils, name: "Hospitality" },
-             { icon: BookOpen, name: "Education" },
-             { icon: Briefcase, name: "Services" }
-           ].map((ind, i) => (
-             <div key={i} className="bg-white/10 backdrop-blur-sm p-6 rounded-xl flex flex-col items-center justify-center gap-3 hover:bg-white/20 transition-colors cursor-default">
-               <ind.icon className="w-8 h-8 text-purple-300" />
-               <span className="font-medium text-sm">{ind.name}</span>
-             </div>
-           ))}
-        </div>
-      </div>
-    </Section>
-
-    {/* 6. Process */}
-    <Section>
-       <h2 className="text-3xl font-bold mb-12 text-center">Our Simple Process</h2>
-       <div className="max-w-4xl mx-auto space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
-          {[
-            { step: "01", title: "Discovery Call", desc: "We learn what you need, your goals, and how your business works." },
-            { step: "02", title: "Custom Preview", desc: "We design a homepage preview so you can visualise everything before we build." },
-            { step: "03", title: "Dev & Setup", desc: "We build your pages, SEO, mobile responsiveness and connect all systems." },
-            { step: "04", title: "Revisions", desc: "You request changes. We refine until you’re ready to launch." },
-            { step: "05", title: "Launch", desc: "Your website goes live. We handle hosting, setup, security, and monitoring." },
-            { step: "06", title: "Monthly Support", desc: "You focus on your business. We handle updates, changes, SEO and content." }
-          ].map((item, i) => (
-            <div key={i} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-              {/* Icon/Dot */}
-              <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-300 group-hover:bg-purple-500 group-hover:text-white text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-bold text-xs transition-colors">
-                {item.step}
-              </div>
-              {/* Content */}
-              <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                 <h3 className="font-bold text-lg mb-1 text-slate-900 dark:text-white">{item.title}</h3>
-                 <p className="text-sm text-slate-500">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-       </div>
-    </Section>
-
-    {/* 7. Extra Elements (Stats & Tech) */}
-    <Section className="bg-slate-50 dark:bg-slate-900/50 rounded-3xl">
-      <div className="grid md:grid-cols-2 gap-12 items-center">
-        <div>
-          <h2 className="text-2xl font-bold mb-6">Build50 by the Numbers</h2>
-          <div className="grid grid-cols-2 gap-6">
-            {[
-              { label: "Avg Build Time", val: "10 Days", icon: CalendarIcon },
-              { label: "Response Time", val: "< 2 Hrs", icon: Clock },
-              { label: "Client Renewal", val: "90%+", icon: TrendingUp },
-              { label: "Aussie Owned", val: "100%", icon: Star }
-            ].map((stat, i) => (
-              <div key={i} className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm">
-                <div className="text-purple-600 mb-2"><stat.icon className="w-5 h-5"/></div>
-                <div className="text-2xl font-bold mb-1">{stat.val}</div>
-                <div className="text-xs text-slate-500 uppercase tracking-wide">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div>
-           <h2 className="text-2xl font-bold mb-6">Built on Modern Tech</h2>
-           <p className="text-slate-600 dark:text-slate-400 mb-6">We don't use slow, insecure builders. We use the same stack as major tech companies for speed and reliability.</p>
-           <div className="flex flex-wrap gap-3">
-             {['React', 'Next.js', 'Tailwind CSS', 'Vercel', 'TypeScript', 'Framer Motion', 'Shopify'].map(tech => (
-               <span key={tech} className="px-3 py-1 bg-slate-200 dark:bg-slate-700 rounded-full text-sm font-medium text-slate-700 dark:text-slate-300">
-                 {tech}
-               </span>
-             ))}
-           </div>
-        </div>
-      </div>
-    </Section>
-
-    {/* CTA */}
-    <Section className="text-center py-20">
-       <h2 className="text-4xl font-bold mb-4">Ready to grow your business?</h2>
-       <p className="text-xl text-slate-500 mb-8 max-w-2xl mx-auto">Let’s build your website in the next 7 days. Book your free 20-minute strategy session.</p>
-       <div className="flex flex-col sm:flex-row justify-center gap-4">
-         <Button onClick={() => setPage('book')}>Book a Call</Button>
-         <Button variant="outline" onClick={() => window.open('https://wa.me/61400123456')}>Message on WhatsApp</Button>
-       </div>
-    </Section>
-
   </motion.div>
 );
 
-const Contact = () => {
-  const [formState, setFormState] = useState({ name: '', email: '', package: 'Growth', message: '' });
+const Contact = ({ setPage }: { setPage?: (page: PageType) => void }) => {
+  const [formState, setFormState] = useState({ name: '', businessName: '', email: '', phone: '', service: 'Website', message: '' });
   const [status, setStatus] = useState('idle');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('sending');
-    // Simulate API call
     setTimeout(() => {
       setStatus('success');
-      setFormState({ name: '', email: '', package: 'Growth', message: '' });
+      setFormState({ name: '', businessName: '', email: '', phone: '', service: 'Website', message: '' });
     }, 1500);
   };
+
+  const SERVICE_OPTIONS = [
+    "Website",
+    "E-Commerce",
+    "Mobile App",
+    "Branding",
+    "SEO",
+    "Website Maintenance",
+    "Other"
+  ];
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-24 pb-12">
       <Section className="max-w-4xl">
-        <div className="grid md:grid-cols-2 gap-12">
+        <div className="grid md:grid-cols-2 gap-16">
           <div>
-            <h1 className="text-4xl font-bold mb-6">Let's Talk</h1>
-            <p className="text-slate-600 dark:text-slate-300 mb-8">
-              Ready to grow your business? Fill out the form or use the quick links below.
+            <h1 className="text-5xl font-black mb-6 uppercase tracking-tighter">Let's Talk</h1>
+            <p className="text-neutral-600 dark:text-neutral-300 mb-8 text-lg font-light">
+              Ready to scale? Fill out the form or use the quick links below.
             </p>
             
             <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
-                  <MessageCircle className="w-5 h-5" />
+              {/* Phone */}
+              <div className="flex items-center gap-4 group cursor-pointer" onClick={() => window.open('tel:0352345189')}>
+                <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 group-hover:bg-violet-100 dark:group-hover:bg-violet-900 transition-colors flex items-center justify-center">
+                  <Phone className="w-6 h-6 text-neutral-900 dark:text-white group-hover:text-violet-600" />
                 </div>
                 <div>
-                  <div className="font-bold">WhatsApp Us</div>
-                  <div className="text-sm text-slate-500">+61 400 123 456</div>
+                  <div className="font-bold uppercase text-sm">Call Us</div>
+                  <div className="text-sm text-neutral-500">03 5234 5189</div>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
-                  <Mail className="w-5 h-5" />
+
+              {/* WhatsApp */}
+              <div className="flex items-center gap-4 group cursor-pointer" onClick={() => window.open('https://wa.me/61400123456')}>
+                <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 group-hover:bg-green-100 dark:group-hover:bg-green-900 transition-colors flex items-center justify-center">
+                  <MessageCircle className="w-6 h-6 text-neutral-900 dark:text-white group-hover:text-green-600" />
                 </div>
                 <div>
-                  <div className="font-bold">Email Us</div>
-                  <div className="text-sm text-slate-500">hello@build50.com</div>
+                  <div className="font-bold uppercase text-sm">WhatsApp</div>
+                  <div className="text-sm text-neutral-500">0400 123 456</div>
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="flex items-center gap-4 group cursor-pointer" onClick={() => window.open('mailto:hello@build50.com')}>
+                <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 group-hover:bg-blue-100 dark:group-hover:bg-blue-900 transition-colors flex items-center justify-center">
+                  <Mail className="w-6 h-6 text-neutral-900 dark:text-white group-hover:text-blue-600" />
+                </div>
+                <div>
+                  <div className="font-bold uppercase text-sm">Email Us</div>
+                  <div className="text-sm text-neutral-500">hello@build50.com</div>
+                </div>
+              </div>
+
+              {/* Address */}
+              <div className="flex items-center gap-4 group cursor-pointer">
+                <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 group-hover:bg-purple-100 dark:group-hover:bg-purple-900 transition-colors flex items-center justify-center">
+                  <MapPin className="w-6 h-6 text-neutral-900 dark:text-white group-hover:text-purple-600" />
+                </div>
+                <div>
+                  <div className="font-bold uppercase text-sm">Our Location</div>
+                  <div className="text-sm text-neutral-500">Wallan 3756</div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-12 p-6 bg-slate-50 dark:bg-slate-800 rounded-xl">
-               <h3 className="font-bold mb-2">Office Hours</h3>
-               <p className="text-sm text-slate-500">Mon-Fri: 9am - 5pm (AEST)</p>
-               <p className="text-sm text-slate-500">Melbourne, Australia</p>
+            <div className="mt-12 p-6 bg-neutral-50 dark:bg-neutral-900/50 border-l-4 border-violet-600">
+               <h3 className="font-bold mb-2 uppercase text-sm">Office Hours</h3>
+               <p className="text-sm text-neutral-500">Mon-Fri: 9am - 5pm (AEST)</p>
+               <p className="text-sm text-neutral-500">Melbourne, Australia</p>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl shadow-lg">
+          <div className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800 p-8 shadow-2xl">
             {status === 'success' ? (
               <div className="text-center py-12">
                 <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Check className="w-8 h-8" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
-                <p className="text-slate-500 mb-6">We'll get back to you within 24 hours.</p>
-                <Button onClick={() => setStatus('idle')} variant="outline">Send Another</Button>
+                <p className="text-neutral-500 mb-6">We'll get back to you within 24 hours.</p>
+                <Button onClick={() => setStatus('idle')} variant="outline" className="w-full">Send Another</Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Name</label>
+                  <label className="block text-xs font-bold uppercase mb-2 text-neutral-500">Full Name</label>
                   <input 
                     required 
                     type="text" 
-                    className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-purple-500 outline-none"
+                    className="w-full p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 focus:border-violet-600 outline-none transition-colors"
                     value={formState.name}
                     onChange={e => setFormState({...formState, name: e.target.value})}
                   />
                 </div>
+                
                 <div>
-                  <label className="block text-sm font-medium mb-1">Email</label>
+                  <label className="block text-xs font-bold uppercase mb-2 text-neutral-500">Business Name (Optional)</label>
+                  <input 
+                    type="text" 
+                    className="w-full p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 focus:border-violet-600 outline-none transition-colors"
+                    value={formState.businessName}
+                    onChange={e => setFormState({...formState, businessName: e.target.value})}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase mb-2 text-neutral-500">Email Address</label>
                   <input 
                     required 
                     type="email" 
-                    className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-purple-500 outline-none"
+                    className="w-full p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 focus:border-violet-600 outline-none transition-colors"
                     value={formState.email}
                     onChange={e => setFormState({...formState, email: e.target.value})}
                   />
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium mb-1">Interested Package</label>
+                  <label className="block text-xs font-bold uppercase mb-2 text-neutral-500">Phone Number</label>
+                  <input 
+                    required 
+                    type="tel" 
+                    className="w-full p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 focus:border-violet-600 outline-none transition-colors"
+                    value={formState.phone}
+                    onChange={e => setFormState({...formState, phone: e.target.value})}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase mb-2 text-neutral-500">Service Interested In</label>
                   <select 
-                    className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-purple-500 outline-none"
-                    value={formState.package}
-                    onChange={e => setFormState({...formState, package: e.target.value})}
+                    className="w-full p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 focus:border-violet-600 outline-none transition-colors appearance-none"
+                    value={formState.service}
+                    onChange={e => setFormState({...formState, service: e.target.value})}
                   >
-                    {PACKAGES.map(p => <option key={p.name} value={p.name}>{p.name} ({p.price})</option>)}
+                    {SERVICE_OPTIONS.map(option => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
                   </select>
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium mb-1">Message</label>
+                  <label className="block text-xs font-bold uppercase mb-2 text-neutral-500">Message</label>
                   <textarea 
                     rows={4}
-                    className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-purple-500 outline-none"
+                    className="w-full p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 focus:border-violet-600 outline-none transition-colors placeholder:text-neutral-400 dark:placeholder:text-neutral-600 text-sm"
+                    placeholder="Please describe your project in detail, including your budget range and preferred timeline, so we can prepare a tailored and accurate quote for you."
                     value={formState.message}
                     onChange={e => setFormState({...formState, message: e.target.value})}
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={status === 'sending'}>
-                  {status === 'sending' ? 'Sending...' : 'Send Message'}
+                <Button type="submit" className="w-full h-14" disabled={status === 'sending'}>
+                  {status === 'sending' ? 'Sending...' : 'Get a Free Quote'}
                 </Button>
               </form>
             )}
@@ -1047,11 +842,11 @@ const Book = () => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-24 pb-12">
     <Section className="text-center max-w-4xl">
       <h1 className="text-3xl font-bold mb-6">Book a Free Consult</h1>
-      <div className="bg-white dark:bg-slate-800 h-[600px] rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-lg">
+      <div className="bg-white dark:bg-black h-[600px] border border-neutral-200 dark:border-neutral-800 flex items-center justify-center shadow-lg">
         <div className="text-center p-8">
-           <p className="text-slate-500 mb-4">[Calendly Embed Widget Placeholder]</p>
+           <p className="text-neutral-500 mb-4 font-mono text-sm">[Calendly Embed Widget Placeholder]</p>
            <Button>Open Calendly Popup</Button>
-           <p className="text-xs text-slate-400 mt-4">Simulating 3rd party iframe load...</p>
+           <p className="text-xs text-neutral-400 mt-4">Simulating 3rd party iframe load...</p>
         </div>
       </div>
     </Section>
@@ -1085,16 +880,9 @@ const Privacy = () => (
 
 // --- Layout & Main App ---
 
-const CalendarIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-)
-
-const DollarSignIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-)
-
 export default function App() {
   const [page, setPage] = useState<PageType>('home');
+  const [targetSection, setTargetSection] = useState<string | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cookieAccepted, setCookieAccepted] = useState(false);
@@ -1114,25 +902,55 @@ export default function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  // Set the dynamic favicon
+  useEffect(() => {
+    // SVG Data URI for B5 logo (Black background, white B, blue 5)
+    const faviconSvg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+        <rect width="100" height="100" rx="20" fill="black"/>
+        <text x="50" y="75" font-family="Arial" font-weight="bold" font-size="60" text-anchor="middle" fill="white">
+          B<tspan fill="#2563eb">5</tspan>
+        </text>
+      </svg>
+    `;
+    const faviconUrl = `data:image/svg+xml;base64,${btoa(faviconSvg)}`;
+    
+    // Create/update link element
+    let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
+    link.href = faviconUrl;
+  }, []);
+
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
 
   const navLinks: { id: PageType; label: string }[] = [
     { id: 'home', label: 'Home' },
-    { id: 'services', label: 'Services' },
+    { id: 'services', label: 'Services & Pricing' },
     { id: 'portfolio', label: 'Portfolio' },
     { id: 'about', label: 'About' },
     { id: 'contact', label: 'Contact' },
   ];
 
+  // Helper function to handle navigation with optional section scroll
+  const handleNav = (page: PageType, section?: string) => {
+    setPage(page);
+    setTargetSection(section || null);
+    setMobileMenuOpen(false);
+  };
+
   return (
-    <div className={`min-h-screen font-sans transition-colors duration-300 ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-white text-slate-900'}`}>
+    <div className={`min-h-screen font-sans antialiased transition-colors duration-300 ${theme === 'dark' ? 'dark bg-black text-white' : 'bg-white text-neutral-900'}`}>
       
       {/* Navbar */}
-      <nav className="fixed w-full z-50 top-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+      <nav className="fixed w-full z-50 top-0 bg-white/90 dark:bg-black/90 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-900">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="text-2xl font-bold cursor-pointer flex items-center gap-3" onClick={() => setPage('home')}>
-             <BrandLogo className="w-10 h-10" />
-             <span className="tracking-tight">Build50</span>
+          <div className="text-xl font-black tracking-tighter cursor-pointer flex items-center gap-3" onClick={() => handleNav('home')}>
+             <BrandLogo className="w-8 h-8" />
+             <span>BUILD50</span>
           </div>
 
           {/* Desktop Nav */}
@@ -1140,15 +958,15 @@ export default function App() {
             {navLinks.map(link => (
               <button 
                 key={link.id}
-                onClick={() => setPage(link.id)}
-                className={`text-sm font-medium hover:text-purple-600 transition-colors ${page === link.id ? 'text-purple-600' : 'text-slate-600 dark:text-slate-300'}`}
+                onClick={() => handleNav(link.id)}
+                className={`text-sm font-bold uppercase tracking-wider hover:text-violet-600 transition-colors ${page === link.id ? 'text-violet-600' : 'text-neutral-600 dark:text-neutral-400'}`}
               >
                 {link.label}
               </button>
             ))}
-            <Button onClick={() => setPage('book')} className="text-sm py-2 px-4">Book Now</Button>
-            <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-              {theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+            <Button onClick={() => handleNav('book')} className="text-xs h-10 px-6">Start Your Project</Button>
+            <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors">
+              {theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
             </button>
           </div>
 
@@ -1170,19 +988,19 @@ export default function App() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="md:hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 overflow-hidden"
+              className="md:hidden bg-white dark:bg-black border-b border-neutral-200 dark:border-neutral-900 overflow-hidden"
             >
               <div className="flex flex-col p-6 space-y-4">
                 {navLinks.map(link => (
                   <button 
                     key={link.id}
-                    onClick={() => { setPage(link.id); setMobileMenuOpen(false); }}
-                    className="text-lg font-medium text-left"
+                    onClick={() => handleNav(link.id)}
+                    className="text-lg font-bold uppercase tracking-wider text-left"
                   >
                     {link.label}
                   </button>
                 ))}
-                <Button onClick={() => { setPage('book'); setMobileMenuOpen(false); }} className="w-full">Book Consult</Button>
+                <Button onClick={() => handleNav('book')} className="w-full">Book Consult</Button>
               </div>
             </motion.div>
           )}
@@ -1190,59 +1008,75 @@ export default function App() {
       </nav>
 
       {/* Main Content Area */}
-      <main className="min-h-screen">
+      <main className="min-h-screen pt-20">
         <AnimatePresence mode="wait">
           {page === 'home' && <Home key="home" setPage={setPage} />}
-          {page === 'services' && <Services key="services" setPage={setPage} />}
+          {page === 'services' && <Services key="services" setPage={setPage} targetSection={targetSection} />}
           {page === 'portfolio' && <Portfolio key="portfolio" setPage={setPage} />}
           {page === 'about' && <About key="about" setPage={setPage} />}
-          {page === 'contact' && <Contact key="contact" />}
+          {page === 'contact' && <Contact key="contact" setPage={setPage} />}
           {page === 'book' && <Book key="book" />}
           {page === 'privacy' && <Privacy key="privacy" />}
         </AnimatePresence>
       </main>
 
       {/* Footer */}
-      <footer className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-8 mb-12">
-          <div>
-            <div className="text-xl font-bold mb-4 flex items-center gap-2">
+      <footer className="bg-neutral-50 dark:bg-black border-t border-neutral-200 dark:border-neutral-900 pt-24 pb-12">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-16">
+          <div className="col-span-1 md:col-span-1">
+            <div className="text-2xl font-black mb-6 flex items-center gap-2 tracking-tighter">
               <BrandLogo className="w-8 h-8" />
-              Build50
+              BUILD50
             </div>
-            <p className="text-slate-500 text-sm mb-4">
-              Modern websites & branding that convert. Built for small businesses.
+            <p className="text-neutral-500 text-sm mb-6 leading-relaxed">
+              Premium digital solutions for Australian businesses. Built to scale.
             </p>
-            <div className="flex gap-4 text-slate-400">
-               <Instagram className="w-5 h-5 hover:text-purple-500 cursor-pointer" />
-               <Linkedin className="w-5 h-5 hover:text-purple-500 cursor-pointer" />
+            
+            <div className="space-y-3 mb-6 text-sm text-neutral-600 dark:text-neutral-400">
+              <div className="flex items-center gap-3">
+                <Phone className="w-4 h-4 text-violet-600" />
+                <a href="tel:0352345189" className="hover:text-violet-600 transition-colors">03 5234 5189</a>
+              </div>
+              <div className="flex items-center gap-3">
+                <MessageCircle className="w-4 h-4 text-green-500" />
+                <a href="https://wa.me/61400123456" target="_blank" rel="noopener noreferrer" className="hover:text-green-500 transition-colors">0400 123 456</a>
+              </div>
+              <div className="flex items-center gap-3">
+                <MapPin className="w-4 h-4 text-violet-600" />
+                <span>BuildFifty Wallan, 3756</span>
+              </div>
+            </div>
+
+            <div className="flex gap-4 text-neutral-400">
+               <Instagram className="w-5 h-5 hover:text-violet-500 cursor-pointer transition-colors" />
+               <Linkedin className="w-5 h-5 hover:text-violet-500 cursor-pointer transition-colors" />
             </div>
           </div>
           <div>
-            <h4 className="font-bold mb-4">Services</h4>
-            <ul className="space-y-2 text-sm text-slate-500">
-              <li>Web Design</li>
-              <li>Branding</li>
-              <li>Automation</li>
-              <li>SEO Management</li>
+            <h4 className="font-bold mb-6 uppercase text-sm tracking-widest text-neutral-400">Services</h4>
+            <ul className="space-y-3 text-sm text-neutral-600 dark:text-neutral-400 font-medium">
+              <li className="hover:text-violet-600 cursor-pointer" onClick={() => handleNav('services', 'web-design')}>Web Design</li>
+              <li className="hover:text-violet-600 cursor-pointer" onClick={() => handleNav('services', 'app-dev')}>App Development</li>
+              <li className="hover:text-violet-600 cursor-pointer" onClick={() => handleNav('services', 'care-plans')}>Care Plans</li>
+              <li className="hover:text-violet-600 cursor-pointer" onClick={() => handleNav('services', 'branding')}>Branding</li>
             </ul>
           </div>
           <div>
-            <h4 className="font-bold mb-4">Company</h4>
-            <ul className="space-y-2 text-sm text-slate-500">
-              <li className="cursor-pointer hover:text-purple-600" onClick={() => setPage('about')}>About Us</li>
-              <li className="cursor-pointer hover:text-purple-600" onClick={() => setPage('portfolio')}>Portfolio</li>
-              <li className="cursor-pointer hover:text-purple-600" onClick={() => setPage('contact')}>Contact</li>
-              <li className="cursor-pointer hover:text-purple-600" onClick={() => setPage('privacy')}>Privacy Policy</li>
+            <h4 className="font-bold mb-6 uppercase text-sm tracking-widest text-neutral-400">Company</h4>
+            <ul className="space-y-3 text-sm text-neutral-600 dark:text-neutral-400 font-medium">
+              <li className="cursor-pointer hover:text-violet-600" onClick={() => handleNav('about')}>About Us</li>
+              <li className="cursor-pointer hover:text-violet-600" onClick={() => handleNav('portfolio')}>Portfolio</li>
+              <li className="cursor-pointer hover:text-violet-600" onClick={() => handleNav('contact')}>Contact</li>
+              <li className="cursor-pointer hover:text-violet-600" onClick={() => handleNav('privacy')}>Privacy Policy</li>
             </ul>
           </div>
           <div>
-             <h4 className="font-bold mb-4">Get Started</h4>
-             <Button className="w-full mb-2 text-sm" onClick={() => setPage('book')}>Book Free Consult</Button>
-             <p className="text-xs text-slate-500 text-center">No credit card required.</p>
+              <h4 className="font-bold mb-6 uppercase text-sm tracking-widest text-neutral-400">Action</h4>
+              <Button className="w-full mb-4 text-xs h-12" onClick={() => handleNav('book')}>Book Free Consult</Button>
+              <p className="text-xs text-neutral-500 text-center">No credit card required.</p>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-6 border-t border-slate-200 dark:border-slate-800 pt-8 text-center text-sm text-slate-400">
+        <div className="max-w-7xl mx-auto px-6 border-t border-neutral-200 dark:border-neutral-900 pt-8 text-center text-xs text-neutral-500 font-mono uppercase tracking-widest">
           © 2025 Build50. All rights reserved.
         </div>
       </footer>
@@ -1259,14 +1093,14 @@ export default function App() {
 
       {/* Cookie Banner */}
       {!cookieAccepted && (
-        <div className="fixed bottom-0 left-0 w-full bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-4 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-slate-600 dark:text-slate-300">
+        <div className="fixed bottom-0 left-0 w-full bg-white dark:bg-black border-t border-neutral-200 dark:border-neutral-900 p-6 z-50">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 font-medium">
               We use cookies to improve your experience and analyze traffic.
             </p>
             <div className="flex gap-4">
-              <button onClick={() => setCookieAccepted(true)} className="text-sm font-medium hover:underline">Manage</button>
-              <Button onClick={() => setCookieAccepted(true)} className="py-2 px-4 text-sm">Accept</Button>
+              <button onClick={() => setCookieAccepted(true)} className="text-sm font-bold uppercase tracking-wider hover:underline">Manage</button>
+              <Button onClick={() => setCookieAccepted(true)} className="py-2 px-6 text-xs h-10">Accept</Button>
             </div>
           </div>
         </div>
