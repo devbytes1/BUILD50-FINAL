@@ -14,7 +14,7 @@ import {
 
 // --- Interfaces & Types ---
 
-type PageType = 'home' | 'services' | 'portfolio' | 'about' | 'contact' | 'privacy';
+type PageType = 'home' | 'services' | 'portfolio' | 'about' | 'contact' | 'book' | 'privacy';
 
 interface PageProps {
   setPage: (page: PageType) => void;
@@ -252,11 +252,13 @@ const Home = ({ setPage }: PageProps) => (
 );
 
 const Services = ({ setPage, targetSection }: PageProps) => {
+  const [appDevPricingMode, setAppDevPricingMode] = useState<'invoice' | 'cash'>('invoice');
+  const [webPricingMode, setWebPricingMode] = useState<'invoice' | 'cash'>('invoice');
+
   useEffect(() => {
     if (targetSection) {
       const element = document.getElementById(targetSection);
       if (element) {
-        // Short timeout to ensure DOM is ready and layout is stable
         setTimeout(() => {
           element.scrollIntoView({ behavior: 'smooth' });
         }, 100);
@@ -265,6 +267,25 @@ const Services = ({ setPage, targetSection }: PageProps) => {
         window.scrollTo(0, 0);
     }
   }, [targetSection]);
+
+  const webPackages = [
+    { 
+      name: 'Single Page', 
+      price: webPricingMode === 'invoice' ? '$299' : '$199', 
+      features: ['1 modern landing page', 'Services section', 'Image gallery', 'Contact form', 'Click-to-call button', 'Google Maps', 'Mobile-responsive', '3 Months FREE Hosting'] 
+    },
+    { 
+      name: 'Multi-Page', 
+      price: webPricingMode === 'invoice' ? '$449' : '$349', 
+      highlight: true,
+      features: ['3–4 pages (Home, About, Services)', 'Gallery & Testimonials', 'Lead contact form', 'SEO-ready structure', 'Mobile-friendly layout', '3 Months FREE Hosting'] 
+    },
+    { 
+      name: 'Premium', 
+      price: webPricingMode === 'invoice' ? '$699' : '$549', 
+      features: ['Up to 6 pages', 'Premium layout & animations', 'Advanced lead/quote forms', 'Polished branding & visuals', 'SEO structure', '3 Months FREE Hosting'] 
+    }
+  ];
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-24 pb-12">
@@ -284,34 +305,43 @@ const Services = ({ setPage, targetSection }: PageProps) => {
 
         {/* WEBSITE PACKAGES */}
         <div className="mb-24" id="web-design">
-          <div className="flex items-end gap-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
-             <Globe className="w-8 h-8 text-violet-600" /> 
-             <h2 className="text-3xl font-bold uppercase tracking-tight">Web Development</h2>
+          <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
+             <div className="flex items-center gap-4">
+                <Globe className="w-8 h-8 text-violet-600" /> 
+                <h2 className="text-3xl font-bold uppercase tracking-tight">Web Development</h2>
+             </div>
+             {/* Web Pricing Toggle */}
+             <div className="flex justify-center items-center gap-0 bg-neutral-100 dark:bg-neutral-900 p-1 rounded-lg border border-neutral-200 dark:border-neutral-800">
+               <button 
+                 onClick={() => setWebPricingMode('invoice')}
+                 className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wide transition-all ${webPricingMode === 'invoice' ? 'bg-white dark:bg-black text-black dark:text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-300'}`}
+               >
+                 Standard Invoice
+               </button>
+               <button 
+                 onClick={() => setWebPricingMode('cash')}
+                 className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wide transition-all ${webPricingMode === 'cash' ? 'bg-white dark:bg-black text-black dark:text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-300'}`}
+               >
+                 Direct Settlement
+               </button>
+             </div>
           </div>
           
           <div className="grid lg:grid-cols-3 gap-0 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black">
-            {[
-              { 
-                name: 'Single Page', 
-                price: '$199', 
-                features: ['1 modern landing page', 'Services section', 'Image gallery', 'Contact form', 'Click-to-call button', 'Google Maps', 'Mobile-responsive', '3 Months FREE Hosting'] 
-              },
-              { 
-                name: 'Multi-Page', 
-                price: '$349', 
-                highlight: true,
-                features: ['3–4 pages (Home, About, Services)', 'Gallery & Testimonials', 'Lead contact form', 'SEO-ready structure', 'Mobile-friendly layout', '3 Months FREE Hosting'] 
-              },
-              { 
-                name: 'Premium', 
-                price: '$549', 
-                features: ['Up to 6 pages', 'Premium layout & animations', 'Advanced lead/quote forms', 'Polished branding & visuals', 'SEO structure', '3 Months FREE Hosting'] 
-              }
-            ].map((pkg, i) => (
+            {webPackages.map((pkg, i) => (
               <div key={pkg.name} className={`p-8 flex flex-col ${pkg.highlight ? 'bg-neutral-50 dark:bg-neutral-900 relative z-10 ring-1 ring-inset ring-violet-500' : 'hover:bg-neutral-50 dark:hover:bg-neutral-900/50'} ${i !== 2 ? 'border-r border-neutral-200 dark:border-neutral-800' : ''}`}>
                 {pkg.highlight && <div className="absolute top-0 right-0 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 uppercase">Recommended</div>}
                 <h3 className="text-lg font-bold mb-2 uppercase tracking-wide text-neutral-500">{pkg.name}</h3>
-                <div className="text-4xl font-black mb-6 text-neutral-900 dark:text-white tracking-tighter">{pkg.price}</div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={pkg.price}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-4xl font-black mb-6 text-neutral-900 dark:text-white tracking-tighter"
+                  >
+                    {pkg.price}
+                  </motion.div>
+                </AnimatePresence>
                 <ul className="space-y-4 mb-8 flex-grow">
                   {pkg.features.map(f => (
                     <li key={f} className="flex items-start text-sm gap-3 text-neutral-600 dark:text-neutral-400">
@@ -327,9 +357,15 @@ const Services = ({ setPage, targetSection }: PageProps) => {
 
         {/* ADVANCED SOLUTIONS */}
         <div className="mb-24">
-           <div className="flex items-end gap-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
-             <ShoppingBag className="w-8 h-8 text-violet-600" /> 
-             <h2 className="text-3xl font-bold uppercase tracking-tight">Advanced Solutions</h2>
+           <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
+             <div className="flex items-center gap-4">
+                <ShoppingBag className="w-8 h-8 text-violet-600" /> 
+                <h2 className="text-3xl font-bold uppercase tracking-tight">Advanced Solutions</h2>
+             </div>
+             {/* Dynamic Text for Advanced Solutions */}
+             <div className="text-xs text-neutral-500 font-mono hidden md:block uppercase tracking-wider">
+               {webPricingMode === 'invoice' ? 'Standard Invoice Pricing' : 'Direct Settlement Pricing'}
+             </div>
            </div>
            <div className="grid md:grid-cols-2 gap-8">
               <Card className="hover:border-violet-600 transition-colors">
@@ -343,7 +379,16 @@ const Services = ({ setPage, targetSection }: PageProps) => {
               <Card className="hover:border-violet-600 transition-colors">
                  <div className="flex justify-between items-start mb-4">
                     <h3 className="text-xl font-bold uppercase">Restaurant</h3>
-                    <span className="text-2xl font-black text-neutral-900 dark:text-white">$599</span>
+                    <AnimatePresence mode="wait">
+                      <motion.span 
+                        key={webPricingMode}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-2xl font-black text-neutral-900 dark:text-white"
+                      >
+                        {webPricingMode === 'invoice' ? '$749' : '$599'}
+                      </motion.span>
+                    </AnimatePresence>
                  </div>
                  <ul className="space-y-2 mb-6 text-sm text-neutral-600 dark:text-neutral-300">
                     <li className="flex gap-2"><Check className="w-4 h-4 text-violet-500"/> Digital menu & Gallery</li>
@@ -358,18 +403,105 @@ const Services = ({ setPage, targetSection }: PageProps) => {
 
         {/* APP DEVELOPMENT */}
         <div className="mb-24" id="app-dev">
-           <div className="max-w-3xl mx-auto">
-             <div className="p-12 bg-black text-white text-center relative overflow-hidden">
+           <div className="max-w-4xl mx-auto">
+             <div className="p-12 bg-black text-white text-center relative overflow-hidden transition-all duration-300 border border-neutral-800">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-violet-900/50 blur-[80px]"></div>
-                <Smartphone className="w-12 h-12 text-violet-500 mx-auto mb-4 relative z-10" />
-                <h3 className="text-2xl font-bold mb-2 uppercase relative z-10">Custom Mobile App Development</h3>
-                <div className="text-5xl font-black mb-4 relative z-10 text-white flex items-baseline justify-center gap-2">
-                  <span className="text-2xl font-normal text-neutral-400">Starting at</span> $6,500
+                
+                <div className="relative z-10">
+                  <Smartphone className="w-12 h-12 text-violet-500 mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold mb-6 uppercase">Custom Mobile App Development</h3>
+                  
+                  {/* Pricing Toggle */}
+                  <div className="flex justify-center items-center gap-4 mb-10 bg-neutral-900 w-fit mx-auto p-1 rounded-full border border-neutral-800">
+                    <button 
+                      onClick={() => setAppDevPricingMode('invoice')}
+                      className={`px-6 py-2 rounded-full text-sm font-bold uppercase tracking-wide transition-all ${appDevPricingMode === 'invoice' ? 'bg-violet-600 text-white shadow-lg' : 'text-neutral-400 hover:text-white'}`}
+                    >
+                      Standard Invoice
+                    </button>
+                    <button 
+                      onClick={() => setAppDevPricingMode('cash')}
+                      className={`px-6 py-2 rounded-full text-sm font-bold uppercase tracking-wide transition-all ${appDevPricingMode === 'cash' ? 'bg-violet-600 text-white shadow-lg' : 'text-neutral-400 hover:text-white'}`}
+                    >
+                      Direct Settlement
+                    </button>
+                  </div>
+
+                  {/* Pricing Display */}
+                  <AnimatePresence mode="wait">
+                    {appDevPricingMode === 'invoice' ? (
+                      <motion.div
+                        key="invoice"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="mb-8"
+                      >
+                        <div className="text-6xl font-black mb-4 tracking-tighter">$4,999</div>
+                        
+                        <div className="grid md:grid-cols-2 gap-4 max-w-lg mx-auto text-left text-sm bg-neutral-900/50 p-6 rounded-lg border border-neutral-800">
+                           <div className="flex items-start gap-3">
+                              <Check className="w-5 h-5 text-green-500 shrink-0" />
+                              <div><strong className="text-white">Tax Invoice Provided</strong><br/><span className="text-neutral-500 text-xs">GST Compliant</span></div>
+                           </div>
+                           <div className="flex items-start gap-3">
+                              <Check className="w-5 h-5 text-green-500 shrink-0" />
+                              <div><strong className="text-white">1 Year Free Maintenance</strong><br/><span className="text-neutral-500 text-xs">$2,400 Value included</span></div>
+                           </div>
+                           <div className="flex items-start gap-3">
+                              <Check className="w-5 h-5 text-green-500 shrink-0" />
+                              <div><strong className="text-white">Full Training Included</strong><br/><span className="text-neutral-500 text-xs">Handover & Docs</span></div>
+                           </div>
+                           <div className="flex items-start gap-3">
+                              <Check className="w-5 h-5 text-green-500 shrink-0" />
+                              <div><strong className="text-white">Secure Payment</strong><br/><span className="text-neutral-500 text-xs">Bank Transfer / Card</span></div>
+                           </div>
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="cash"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="mb-8"
+                      >
+                        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                           {/* Base Option */}
+                           <div className="bg-neutral-900 p-6 border border-neutral-800 rounded-lg">
+                              <div className="text-neutral-400 text-xs font-bold uppercase mb-2">Base Build</div>
+                              <div className="text-4xl font-black mb-2 text-white">$2,975</div>
+                              <div className="text-xs text-neutral-500 mb-4">No Maintenance Included</div>
+                              <ul className="text-left space-y-2 text-sm text-neutral-400">
+                                <li className="flex gap-2"><Check className="w-4 h-4 text-violet-500"/> Full Development</li>
+                                <li className="flex gap-2"><Check className="w-4 h-4 text-violet-500"/> Training Included</li>
+                                <li className="flex gap-2 opacity-50"><X className="w-4 h-4"/> No Invoice</li>
+                              </ul>
+                           </div>
+
+                           {/* With Maintenance Option */}
+                           <div className="bg-neutral-900 p-6 border-2 border-violet-600 rounded-lg relative overflow-hidden">
+                              <div className="absolute top-0 right-0 bg-violet-600 text-white text-[10px] font-bold px-2 py-1">BEST VALUE</div>
+                              <div className="text-violet-400 text-xs font-bold uppercase mb-2">Build + 1 Year Maintenance</div>
+                              <div className="text-4xl font-black mb-2 text-white">$3,275</div>
+                              <div className="text-xs text-neutral-500 mb-4">Includes $2,400 worth of maintenance</div>
+                              <ul className="text-left space-y-2 text-sm text-neutral-400">
+                                <li className="flex gap-2"><Check className="w-4 h-4 text-green-500"/> All Base Features</li>
+                                <li className="flex gap-2"><Check className="w-4 h-4 text-green-500"/> 12 Months Support</li>
+                                <li className="flex gap-2"><Check className="w-4 h-4 text-green-500"/> Priority Fixes</li>
+                              </ul>
+                           </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <p className="text-neutral-400 mb-8 max-w-2xl mx-auto border-t border-neutral-800 pt-6 mt-8">
+                    One of the most affordable full-scale app development solutions in the industry, without compromising on quality, performance, or security.
+                  </p>
+                  
+                  <Button className="w-full md:w-auto mx-auto border-white text-white hover:bg-white hover:text-black" onClick={() => setPage('contact')}>Discuss Your App Idea</Button>
                 </div>
-                <p className="text-neutral-400 mb-8 relative z-10 max-w-2xl mx-auto">
-                  One of the most affordable full-scale app development solutions in the industry, without compromising on quality, performance, or security.
-                </p>
-                <Button className="w-full md:w-auto mx-auto border-white text-white hover:bg-white hover:text-black relative z-10" onClick={() => setPage('contact')}>Discuss Your App Idea</Button>
              </div>
            </div>
         </div>
@@ -380,9 +512,9 @@ const Services = ({ setPage, targetSection }: PageProps) => {
              <Shield className="w-8 h-8 text-violet-600" /> 
              <h2 className="text-3xl font-bold uppercase tracking-tight">Care Plans</h2>
            </div>
-           <div className="grid md:grid-cols-2 gap-6">
+           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card>
-                 <h3 className="text-xl font-bold mb-2 uppercase">Basic Care</h3>
+                 <h3 className="text-xl font-bold mb-2 uppercase">Web Basic</h3>
                  <div className="text-3xl font-black mb-4 text-neutral-900 dark:text-white">$30<span className="text-sm font-normal text-neutral-500">/mo</span></div>
                  <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-300 mb-6">
                     <li>• 2 edits per month</li>
@@ -394,7 +526,7 @@ const Services = ({ setPage, targetSection }: PageProps) => {
               </Card>
               <Card highlight>
                  <div className="absolute top-0 right-0 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 uppercase">Recommended</div>
-                 <h3 className="text-xl font-bold mb-2 uppercase">Full Care</h3>
+                 <h3 className="text-xl font-bold mb-2 uppercase">Web Full Care</h3>
                  <div className="text-3xl font-black mb-4 text-neutral-900 dark:text-white">$60<span className="text-sm font-normal text-neutral-500">/mo</span></div>
                  <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-300 mb-6">
                     <li>• Unlimited edits & Updates</li>
@@ -403,6 +535,20 @@ const Services = ({ setPage, targetSection }: PageProps) => {
                     <li>• Ongoing improvements</li>
                  </ul>
                  <Button className="w-full" onClick={() => setPage('contact')}>Subscribe</Button>
+              </Card>
+              {/* New App Care Plan */}
+              <Card className="border-violet-600/50 hover:border-violet-600 transition-colors relative">
+                 <div className="absolute top-0 right-0 bg-black dark:bg-white text-white dark:text-black text-[10px] font-bold px-2 py-1 uppercase">App Only</div>
+                 <h3 className="text-xl font-bold mb-2 uppercase">App Maintenance</h3>
+                 <div className="text-3xl font-black mb-1 text-neutral-900 dark:text-white">$200<span className="text-sm font-normal text-neutral-500">/mo</span></div>
+                 <div className="text-xs font-bold text-green-600 mb-4">OR $1,000 / Year (Save $1,400)</div>
+                 <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-300 mb-6">
+                    <li>• App Store Compliance</li>
+                    <li>• iOS & Android Updates</li>
+                    <li>• Server & API Maintenance</li>
+                    <li>• Critical Bug Fixes</li>
+                 </ul>
+                 <Button variant="outline" className="w-full" onClick={() => setPage('contact')}>Subscribe</Button>
               </Card>
            </div>
         </div>
@@ -483,9 +629,6 @@ const Services = ({ setPage, targetSection }: PageProps) => {
               <ul className="space-y-3 text-sm text-neutral-700 dark:text-neutral-300">
                  <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500"/> 50% upfront before work begins</li>
                  <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500"/> 50% on completion</li>
-                 <li className="pt-2 border-t border-neutral-200 dark:border-neutral-800 flex gap-2 font-bold">
-                    <span className="text-violet-600">ZIP</span> monthly payments available (+8.5% surcharge)
-                 </li>
               </ul>
            </div>
         </div>
@@ -886,6 +1029,29 @@ export default function App() {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // Set the dynamic favicon
+  useEffect(() => {
+    // SVG Data URI for B5 logo (Black background, white B, blue 5)
+    const faviconSvg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+        <rect width="100" height="100" rx="20" fill="black"/>
+        <text x="50" y="75" font-family="Arial" font-weight="bold" font-size="60" text-anchor="middle" fill="white">
+          B<tspan fill="#2563eb">5</tspan>
+        </text>
+      </svg>
+    `;
+    const faviconUrl = `data:image/svg+xml;base64,${btoa(faviconSvg)}`;
+    
+    // Create/update link element
+    let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
+    link.href = faviconUrl;
+  }, []);
 
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
 
