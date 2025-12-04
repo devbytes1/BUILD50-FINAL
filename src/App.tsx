@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Menu, X, Check, ArrowRight, Star, 
+  Menu, X, Moon, Sun, Check, ArrowRight, Star, 
   Code, Zap, Search, Layout, Smartphone, Mail, 
   Instagram, Linkedin, Globe, MessageCircle,
   Clock, Shield, Users, Hammer, Heart, ShoppingBag, 
@@ -34,9 +34,9 @@ interface ButtonProps {
 
 const BrandLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
   <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M20 85V55H35V85H20Z" className="fill-white" />
-    <path d="M42.5 85V40H57.5V85H42.5Z" className="fill-white" />
-    <path d="M65 85V25H80V85H65Z" className="fill-white" />
+    <path d="M20 85V55H35V85H20Z" className="fill-neutral-900 dark:fill-white" />
+    <path d="M42.5 85V40H57.5V85H42.5Z" className="fill-neutral-900 dark:fill-white" />
+    <path d="M65 85V25H80V85H65Z" className="fill-neutral-900 dark:fill-white" />
     <path d="M10 60 L35 35 L50 50 L85 15" stroke="#7c3aed" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
     <path d="M85 15 L70 15 M85 15 L85 30" stroke="#7c3aed" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
@@ -47,8 +47,8 @@ const Button = ({ children, variant = 'primary', className = '', onClick, type =
   
   const variants: Record<string, string> = {
     primary: "bg-violet-600 hover:bg-violet-700 border-violet-600 text-white shadow-lg shadow-violet-900/20",
-    secondary: "bg-black border-neutral-800 text-white hover:bg-neutral-900",
-    outline: "border-violet-600 text-violet-400 hover:bg-violet-900/20",
+    secondary: "bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-900",
+    outline: "border-violet-600 text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20",
   };
 
   return (
@@ -67,8 +67,8 @@ const Section = ({ children, className = "" }: { children: React.ReactNode; clas
 const Card = ({ children, className = "", highlight = false }: { children: React.ReactNode; className?: string; highlight?: boolean }) => (
   <div className={`p-8 rounded-none transition-all duration-300 ${
     highlight 
-      ? 'bg-neutral-900 ring-1 ring-violet-500 shadow-2xl shadow-violet-500/10 z-10' 
-      : 'bg-neutral-900/50 border border-neutral-800 hover:border-violet-500/50'
+      ? 'bg-white dark:bg-neutral-900 ring-1 ring-violet-500 shadow-2xl shadow-violet-500/10 z-10' 
+      : 'bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 hover:border-violet-500/50'
     } ${className}`}>
     {children}
   </div>
@@ -80,8 +80,8 @@ const Home = ({ setPage }: PageProps) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
     
     {/* 1. Agency Hero Section */}
-    <section className="relative pt-40 pb-32 px-6 flex flex-col items-center text-center overflow-hidden bg-black">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-800/20 via-transparent to-transparent"></div>
+    <section className="relative pt-40 pb-32 px-6 flex flex-col items-center text-center overflow-hidden bg-white dark:bg-black">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-100 via-transparent to-transparent dark:from-neutral-800/20"></div>
       
       {/* Abstract Grid Background */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
@@ -93,20 +93,20 @@ const Home = ({ setPage }: PageProps) => (
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="max-w-5xl relative z-10"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-neutral-900 border border-neutral-800 text-xs font-mono uppercase tracking-widest text-neutral-400 mb-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-xs font-mono uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-8">
           <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></span> Melbourne Based Agency
         </div>
 
-        <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
+        <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-neutral-900 dark:text-white mb-8 leading-[0.9]">
           WE BUILD <br className="hidden md:block"/>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-500">DIGITAL EMPIRES</span>
         </h1>
         
-        <p className="text-xl md:text-2xl text-neutral-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
+        <p className="text-xl md:text-2xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
           Premium web development & automation for Australian businesses ready to scale. No fluff. Just results.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-0 justify-center items-center border border-neutral-800 bg-neutral-900 p-2 w-fit mx-auto shadow-xl">
+        <div className="flex flex-col sm:flex-row gap-0 justify-center items-center border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-2 w-fit mx-auto shadow-xl">
           <Button onClick={() => setPage('contact')} className="w-full sm:w-auto h-12 text-base border-0">
             Start Project
           </Button>
@@ -118,8 +118,8 @@ const Home = ({ setPage }: PageProps) => (
     </section>
 
     {/* 2. Stats Strip */}
-    <div className="bg-neutral-950 border-y border-neutral-900">
-      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-neutral-900">
+    <div className="bg-neutral-50 dark:bg-neutral-950 border-y border-neutral-200 dark:border-neutral-900">
+      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-neutral-200 dark:divide-neutral-900">
         {[
           { label: "Turnaround", val: "7-14 DAYS" },
           { label: "Support", val: "LOCAL AUS" },
@@ -128,7 +128,7 @@ const Home = ({ setPage }: PageProps) => (
         ].map((item, i) => (
           <div key={i} className="py-12 px-6 text-center">
             <div className="text-sm font-mono text-neutral-500 uppercase tracking-widest mb-2">{item.label}</div>
-            <div className="text-xl md:text-2xl font-black text-white">{item.val}</div>
+            <div className="text-xl md:text-2xl font-black text-neutral-900 dark:text-white">{item.val}</div>
           </div>
         ))}
       </div>
@@ -139,7 +139,7 @@ const Home = ({ setPage }: PageProps) => (
       <div className="grid md:grid-cols-2 gap-16 lg:gap-24 items-center">
         {/* Left: Problem */}
         <div>
-          <h2 className="text-4xl font-bold mb-8 text-white tracking-tight">The Agency Gap.</h2>
+          <h2 className="text-4xl font-bold mb-8 text-neutral-900 dark:text-white tracking-tight">The Agency Gap.</h2>
           <div className="space-y-8">
             {[
               "Agencies charging $10k+ for basic sites.",
@@ -153,9 +153,9 @@ const Home = ({ setPage }: PageProps) => (
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="flex items-start gap-4 text-neutral-400 group"
+                className="flex items-start gap-4 text-neutral-600 dark:text-neutral-400 group"
               >
-                <div className="mt-1 w-6 h-6 border border-neutral-700 flex items-center justify-center shrink-0 group-hover:border-red-500 transition-colors">
+                <div className="mt-1 w-6 h-6 border border-neutral-300 dark:border-neutral-700 flex items-center justify-center shrink-0 group-hover:border-red-500 transition-colors">
                   <X className="w-3 h-3 text-neutral-400 group-hover:text-red-500" />
                 </div>
                 <span className="text-lg">{prob}</span>
@@ -196,13 +196,13 @@ const Home = ({ setPage }: PageProps) => (
     </Section>
 
     {/* 4. Services Grid */}
-    <Section className="bg-neutral-900/30">
+    <Section className="bg-neutral-100 dark:bg-neutral-900/30">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
           <div>
             <div className="text-violet-600 font-bold tracking-widest text-sm mb-2">CAPABILITIES</div>
-            <h2 className="text-4xl font-bold text-white">Full Cycle Digital.</h2>
+            <h2 className="text-4xl font-bold text-neutral-900 dark:text-white">Full Cycle Digital.</h2>
           </div>
-          <button onClick={() => setPage('services')} className="text-white hover:text-violet-600 transition-colors flex items-center gap-2 font-bold border-b-2 border-transparent hover:border-violet-600 pb-1">
+          <button onClick={() => setPage('services')} className="text-neutral-900 dark:text-white hover:text-violet-600 transition-colors flex items-center gap-2 font-bold border-b-2 border-transparent hover:border-violet-600 pb-1">
             Explore Services <ArrowRight className="w-4 h-4"/>
           </button>
         </div>
@@ -220,11 +220,11 @@ const Home = ({ setPage }: PageProps) => (
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-black p-8 hover:bg-neutral-900 transition-colors cursor-pointer group border border-neutral-800"
+              className="bg-white dark:bg-black p-8 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors cursor-pointer group border border-neutral-200 dark:border-neutral-800"
               onClick={() => setPage('services')}
             >
               <srv.icon className="w-8 h-8 text-neutral-400 group-hover:text-violet-600 mb-6 transition-colors" />
-              <h3 className="font-bold text-xl mb-2 text-white">{srv.title}</h3>
+              <h3 className="font-bold text-xl mb-2">{srv.title}</h3>
               <p className="text-neutral-500 text-sm">{srv.desc}</p>
             </motion.div>
           ))}
@@ -292,72 +292,79 @@ const Services = ({ setPage, targetSection }: PageProps) => {
       <Section>
         {/* HERO SECTION */}
         <div className="text-center max-w-4xl mx-auto mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black rounded-none text-sm font-bold mb-8 uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-black rounded-none text-sm font-bold mb-8 uppercase tracking-wider">
              <Gift className="w-4 h-4" /> 3 Months FREE Hosting
           </div>
-          <h1 className="text-5xl md:text-7xl font-black mb-6 text-white leading-tight tracking-tighter">
+          <h1 className="text-5xl md:text-7xl font-black mb-6 text-neutral-900 dark:text-white leading-tight tracking-tighter">
             TRANSPARENT. <br /><span className="text-violet-600">POWERFUL.</span>
           </h1>
-          <p className="text-xl text-neutral-400 mb-10 max-w-2xl mx-auto font-light">
+          <p className="text-xl text-neutral-600 dark:text-neutral-400 mb-10 max-w-2xl mx-auto font-light">
              Enterprise-grade digital solutions, priced for growth.
           </p>
         </div>
 
         {/* WEBSITE PACKAGES */}
         <div className="mb-24" id="web-design">
-          <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-4 mb-8 border-b border-neutral-800 pb-4">
-             <div className="flex items-center gap-4">
-                <Globe className="w-8 h-8 text-violet-600" /> 
-                <h2 className="text-3xl font-bold uppercase tracking-tight text-white">Web Development</h2>
+          <div className="max-w-7xl mx-auto">
+             <div className="p-8 md:p-12 bg-black text-white text-center relative overflow-hidden transition-all duration-300 border border-neutral-800">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-violet-900/50 blur-[80px]"></div>
+                
+                <div className="relative z-10">
+                  <div className="flex justify-center mb-4">
+                    <Globe className="w-12 h-12 text-violet-500" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-6 uppercase">Web Development</h3>
+                  
+                  {/* Web Pricing Toggle */}
+                  <div className="flex justify-center items-center gap-4 mb-10 bg-neutral-900 w-fit mx-auto p-1 rounded-full border border-neutral-800">
+                    <button 
+                      onClick={() => setWebPricingMode('invoice')}
+                      className={`px-6 py-2 rounded-full text-sm font-bold uppercase tracking-wide transition-all ${webPricingMode === 'invoice' ? 'bg-violet-600 text-white shadow-lg' : 'text-neutral-400 hover:text-white'}`}
+                    >
+                      Standard Invoice
+                    </button>
+                    <button 
+                      onClick={() => setWebPricingMode('cash')}
+                      className={`px-6 py-2 rounded-full text-sm font-bold uppercase tracking-wide transition-all ${webPricingMode === 'cash' ? 'bg-violet-600 text-white shadow-lg' : 'text-neutral-400 hover:text-white'}`}
+                    >
+                      Direct Settlement
+                    </button>
+                  </div>
+
+                  <div className="grid lg:grid-cols-3 gap-0 border border-neutral-800 bg-black text-left">
+                    {webPackages.map((pkg, i) => (
+                      <div key={pkg.name} className={`p-8 flex flex-col ${pkg.highlight ? 'bg-neutral-900 relative z-10 ring-1 ring-inset ring-violet-500' : 'hover:bg-neutral-900/50'} ${i !== 2 ? 'border-b lg:border-b-0 lg:border-r border-neutral-800' : ''}`}>
+                        {pkg.highlight && <div className="absolute top-0 right-0 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 uppercase">Recommended</div>}
+                        <h3 className="text-lg font-bold mb-2 uppercase tracking-wide text-neutral-500">{pkg.name}</h3>
+                        <AnimatePresence mode="wait">
+                          <motion.div
+                            key={pkg.price}
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-4xl font-black mb-6 text-white tracking-tighter"
+                          >
+                            {pkg.price}
+                          </motion.div>
+                        </AnimatePresence>
+                        <ul className="space-y-4 mb-8 flex-grow">
+                          {pkg.features.map(f => (
+                            <li key={f} className="flex items-start text-sm gap-3 text-neutral-400">
+                              <Check className="w-4 h-4 text-violet-600 mt-0.5 shrink-0" /> {f}
+                            </li>
+                          ))}
+                        </ul>
+                        <Button variant={pkg.highlight ? 'primary' : 'outline'} className="w-full" onClick={() => setPage('contact')}>Select Plan</Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
              </div>
-             {/* Web Pricing Toggle */}
-             <div className="flex justify-center items-center gap-0 bg-neutral-900 p-1 rounded-lg border border-neutral-800">
-               <button 
-                 onClick={() => setWebPricingMode('invoice')}
-                 className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wide transition-all ${webPricingMode === 'invoice' ? 'bg-black text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-300'}`}
-               >
-                 Standard Invoice
-               </button>
-               <button 
-                 onClick={() => setWebPricingMode('cash')}
-                 className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wide transition-all ${webPricingMode === 'cash' ? 'bg-black text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-300'}`}
-               >
-                 Direct Settlement
-               </button>
-             </div>
-          </div>
-          
-          <div className="grid lg:grid-cols-3 gap-0 border border-neutral-800 bg-black">
-            {webPackages.map((pkg, i) => (
-              <div key={pkg.name} className={`p-8 flex flex-col ${pkg.highlight ? 'bg-neutral-900 relative z-10 ring-1 ring-inset ring-violet-500' : 'hover:bg-neutral-900/50'} ${i !== 2 ? 'border-r border-neutral-800' : ''}`}>
-                {pkg.highlight && <div className="absolute top-0 right-0 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 uppercase">Recommended</div>}
-                <h3 className="text-lg font-bold mb-2 uppercase tracking-wide text-neutral-500">{pkg.name}</h3>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={pkg.price}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-4xl font-black mb-6 text-white tracking-tighter"
-                  >
-                    {pkg.price}
-                  </motion.div>
-                </AnimatePresence>
-                <ul className="space-y-4 mb-8 flex-grow">
-                  {pkg.features.map(f => (
-                    <li key={f} className="flex items-start text-sm gap-3 text-neutral-400">
-                      <Check className="w-4 h-4 text-violet-600 mt-0.5 shrink-0" /> {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button variant={pkg.highlight ? 'primary' : 'outline'} className="w-full" onClick={() => setPage('contact')}>Select Plan</Button>
-              </div>
-            ))}
           </div>
         </div>
 
         {/* ADVANCED SOLUTIONS */}
         <div className="mb-24">
-           <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-4 mb-8 border-b border-neutral-800 pb-4">
+           <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
              <div className="flex items-center gap-4">
                 <ShoppingBag className="w-8 h-8 text-violet-600" /> 
                 <h2 className="text-3xl font-bold uppercase tracking-tight text-white">Advanced Solutions</h2>
@@ -371,7 +378,7 @@ const Services = ({ setPage, targetSection }: PageProps) => {
               <Card className="hover:border-violet-600 transition-colors">
                  <div className="flex justify-between items-start mb-4">
                     <h3 className="text-xl font-bold uppercase text-white">E-Commerce</h3>
-                    <span className="text-violet-600 font-mono text-sm bg-violet-900/20 px-3 py-1">CUSTOM QUOTE</span>
+                    <span className="text-violet-600 font-mono text-sm bg-violet-50 dark:bg-violet-900/20 px-3 py-1">CUSTOM QUOTE</span>
                  </div>
                  <p className="text-neutral-500 text-sm mb-6">Pricing depends on products, payment gateways, inventory systems, and overall complexity.</p>
                  <Button variant="outline" className="w-full" onClick={() => setPage('contact')}>Request Quote</Button>
