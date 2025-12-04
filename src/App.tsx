@@ -14,7 +14,7 @@ import {
 
 // --- Interfaces & Types ---
 
-type PageType = 'home' | 'services' | 'portfolio' | 'about' | 'contact' | 'book' | 'privacy';
+type PageType = 'home' | 'services' | 'portfolio' | 'about' | 'contact' | 'privacy';
 
 interface PageProps {
   setPage: (page: PageType) => void;
@@ -59,7 +59,7 @@ const Button = ({ children, variant = 'primary', className = '', onClick, type =
 };
 
 const Section = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <section className={`py-16 md:py-32 px-6 md:px-12 max-w-7xl mx-auto ${className}`}>
+  <section className={`py-20 md:py-32 px-6 md:px-12 max-w-7xl mx-auto ${className}`}>
     {children}
   </section>
 );
@@ -80,7 +80,7 @@ const Home = ({ setPage }: PageProps) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
     
     {/* 1. Agency Hero Section */}
-    <section className="relative pt-32 md:pt-40 pb-20 md:pb-32 px-6 flex flex-col items-center text-center overflow-hidden bg-white dark:bg-black">
+    <section className="relative pt-40 pb-32 px-6 flex flex-col items-center text-center overflow-hidden bg-white dark:bg-black">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-100 via-transparent to-transparent dark:from-neutral-800/20"></div>
       
       {/* Abstract Grid Background */}
@@ -97,17 +97,17 @@ const Home = ({ setPage }: PageProps) => (
           <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></span> Melbourne Based Agency
         </div>
 
-        <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter text-neutral-900 dark:text-white mb-8 leading-[0.9]">
+        <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-neutral-900 dark:text-white mb-8 leading-[0.9]">
           WE BUILD <br className="hidden md:block"/>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-500">DIGITAL EMPIRES</span>
         </h1>
         
-        <p className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed px-4">
+        <p className="text-xl md:text-2xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
           Premium web development & automation for Australian businesses ready to scale. No fluff. Just results.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-0 justify-center items-center border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-2 w-full sm:w-fit mx-auto shadow-xl">
-          <Button onClick={() => setPage('book')} className="w-full sm:w-auto h-12 text-base border-0">
+        <div className="flex flex-col sm:flex-row gap-0 justify-center items-center border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-2 w-fit mx-auto shadow-xl">
+          <Button onClick={() => setPage('contact')} className="w-full sm:w-auto h-12 text-base border-0">
             Start Project
           </Button>
           <Button variant="secondary" onClick={() => window.open('https://wa.me/61400123456')} className="w-full sm:w-auto h-12 text-base border-0">
@@ -119,16 +119,16 @@ const Home = ({ setPage }: PageProps) => (
 
     {/* 2. Stats Strip */}
     <div className="bg-neutral-50 dark:bg-neutral-950 border-y border-neutral-200 dark:border-neutral-900">
-      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-neutral-200 dark:divide-neutral-900">
+      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-neutral-200 dark:divide-neutral-900">
         {[
           { label: "Turnaround", val: "7-14 DAYS" },
           { label: "Support", val: "LOCAL AUS" },
           { label: "Security", val: "ENTERPRISE" },
           { label: "Growth", val: "SEO READY" }
         ].map((item, i) => (
-          <div key={i} className="py-8 md:py-12 px-6 text-center">
-            <div className="text-xs md:text-sm font-mono text-neutral-500 uppercase tracking-widest mb-2">{item.label}</div>
-            <div className="text-lg md:text-2xl font-black text-neutral-900 dark:text-white">{item.val}</div>
+          <div key={i} className="py-12 px-6 text-center">
+            <div className="text-sm font-mono text-neutral-500 uppercase tracking-widest mb-2">{item.label}</div>
+            <div className="text-xl md:text-2xl font-black text-neutral-900 dark:text-white">{item.val}</div>
           </div>
         ))}
       </div>
@@ -136,11 +136,11 @@ const Home = ({ setPage }: PageProps) => (
 
     {/* 3. Problem / Solution Split */}
     <Section>
-      <div className="grid md:grid-cols-2 gap-12 lg:gap-24 items-center">
+      <div className="grid md:grid-cols-2 gap-16 lg:gap-24 items-center">
         {/* Left: Problem */}
         <div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-neutral-900 dark:text-white tracking-tight">The Agency Gap.</h2>
-          <div className="space-y-6 md:space-y-8">
+          <h2 className="text-4xl font-bold mb-8 text-neutral-900 dark:text-white tracking-tight">The Agency Gap.</h2>
+          <div className="space-y-8">
             {[
               "Agencies charging $10k+ for basic sites.",
               "DIY builders that look cheap and break.",
@@ -158,16 +158,16 @@ const Home = ({ setPage }: PageProps) => (
                 <div className="mt-1 w-6 h-6 border border-neutral-300 dark:border-neutral-700 flex items-center justify-center shrink-0 group-hover:border-red-500 transition-colors">
                   <X className="w-3 h-3 text-neutral-400 group-hover:text-red-500" />
                 </div>
-                <span className="text-base md:text-lg">{prob}</span>
+                <span className="text-lg">{prob}</span>
               </motion.div>
             ))}
           </div>
         </div>
 
         {/* Right: Solution */}
-        <div className="bg-neutral-900 text-white p-8 md:p-12 relative overflow-hidden">
+        <div className="bg-neutral-900 text-white p-10 md:p-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-violet-600 blur-[100px] opacity-50"></div>
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 relative z-10">The Build50 Standard</h2>
+          <h2 className="text-3xl font-bold mb-8 relative z-10">The Build50 Standard</h2>
           <div className="space-y-6 relative z-10">
             {[
               "Fixed pricing. No surprises.",
@@ -184,7 +184,7 @@ const Home = ({ setPage }: PageProps) => (
                 className="flex items-center gap-4"
               >
                 <CheckCircle className="w-5 h-5 text-violet-500" />
-                <span className="font-bold text-base md:text-lg">{sol}</span>
+                <span className="font-bold text-lg">{sol}</span>
               </motion.div>
             ))}
           </div>
@@ -197,17 +197,17 @@ const Home = ({ setPage }: PageProps) => (
 
     {/* 4. Services Grid */}
     <Section className="bg-neutral-100 dark:bg-neutral-900/30">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 md:mb-16 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
           <div>
             <div className="text-violet-600 font-bold tracking-widest text-sm mb-2">CAPABILITIES</div>
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">Full Cycle Digital.</h2>
+            <h2 className="text-4xl font-bold text-neutral-900 dark:text-white">Full Cycle Digital.</h2>
           </div>
           <button onClick={() => setPage('services')} className="text-neutral-900 dark:text-white hover:text-violet-600 transition-colors flex items-center gap-2 font-bold border-b-2 border-transparent hover:border-violet-600 pb-1">
             Explore Services <ArrowRight className="w-4 h-4"/>
           </button>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-1">
+        <div className="grid md:grid-cols-4 gap-1">
           {[
             { icon: Globe, title: "Websites", desc: "High-performance React builds." },
             { icon: TrendingUp, title: "SEO", desc: "Technical & Content strategy." },
@@ -232,16 +232,16 @@ const Home = ({ setPage }: PageProps) => (
     </Section>
 
     {/* 5. CTA */}
-    <div className="bg-black text-white py-20 md:py-32 px-6 text-center relative overflow-hidden">
+    <div className="bg-black text-white py-32 px-6 text-center relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
       <div className="relative z-10 max-w-3xl mx-auto">
-        <h2 className="text-4xl md:text-7xl font-bold mb-8 tracking-tighter">READY TO SCALE?</h2>
-        <p className="text-lg md:text-xl text-neutral-400 mb-12">Limited slots available for the upcoming month.</p>
+        <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter">READY TO SCALE?</h2>
+        <p className="text-xl text-neutral-400 mb-12">Limited slots available for the upcoming month.</p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Button onClick={() => setPage('book')} className="h-16 px-8 text-lg bg-white text-black hover:bg-neutral-200 border-0 w-full sm:w-auto">
+          <Button onClick={() => setPage('contact')} className="h-16 px-8 text-lg bg-white text-black hover:bg-neutral-200 border-0">
             Book Consultation
           </Button>
-          <Button variant="outline" onClick={() => window.open('https://wa.me/61400123456')} className="h-16 px-8 text-lg border-white text-white hover:bg-white hover:text-black w-full sm:w-auto">
+          <Button variant="outline" onClick={() => window.open('https://wa.me/61400123456')} className="h-16 px-8 text-lg border-white text-white hover:bg-white hover:text-black">
             WhatsApp
           </Button>
         </div>
@@ -274,10 +274,10 @@ const Services = ({ setPage, targetSection }: PageProps) => {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-black rounded-none text-sm font-bold mb-8 uppercase tracking-wider">
              <Gift className="w-4 h-4" /> 3 Months FREE Hosting
           </div>
-          <h1 className="text-4xl md:text-7xl font-black mb-6 text-neutral-900 dark:text-white leading-tight tracking-tighter">
+          <h1 className="text-5xl md:text-7xl font-black mb-6 text-neutral-900 dark:text-white leading-tight tracking-tighter">
             TRANSPARENT. <br /><span className="text-violet-600">POWERFUL.</span>
           </h1>
-          <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 mb-10 max-w-2xl mx-auto font-light">
+          <p className="text-xl text-neutral-600 dark:text-neutral-400 mb-10 max-w-2xl mx-auto font-light">
              Enterprise-grade digital solutions, priced for growth.
           </p>
         </div>
@@ -286,7 +286,7 @@ const Services = ({ setPage, targetSection }: PageProps) => {
         <div className="mb-24" id="web-design">
           <div className="flex items-end gap-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
              <Globe className="w-8 h-8 text-violet-600" /> 
-             <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight">Web Development</h2>
+             <h2 className="text-3xl font-bold uppercase tracking-tight">Web Development</h2>
           </div>
           
           <div className="grid lg:grid-cols-3 gap-0 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black">
@@ -308,7 +308,7 @@ const Services = ({ setPage, targetSection }: PageProps) => {
                 features: ['Up to 6 pages', 'Premium layout & animations', 'Advanced lead/quote forms', 'Polished branding & visuals', 'SEO structure', '3 Months FREE Hosting'] 
               }
             ].map((pkg, i) => (
-              <div key={pkg.name} className={`p-8 flex flex-col ${pkg.highlight ? 'bg-neutral-50 dark:bg-neutral-900 relative z-10 ring-1 ring-inset ring-violet-500' : 'hover:bg-neutral-50 dark:hover:bg-neutral-900/50'} ${i !== 2 ? 'lg:border-r border-b lg:border-b-0 border-neutral-200 dark:border-neutral-800' : ''}`}>
+              <div key={pkg.name} className={`p-8 flex flex-col ${pkg.highlight ? 'bg-neutral-50 dark:bg-neutral-900 relative z-10 ring-1 ring-inset ring-violet-500' : 'hover:bg-neutral-50 dark:hover:bg-neutral-900/50'} ${i !== 2 ? 'border-r border-neutral-200 dark:border-neutral-800' : ''}`}>
                 {pkg.highlight && <div className="absolute top-0 right-0 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 uppercase">Recommended</div>}
                 <h3 className="text-lg font-bold mb-2 uppercase tracking-wide text-neutral-500">{pkg.name}</h3>
                 <div className="text-4xl font-black mb-6 text-neutral-900 dark:text-white tracking-tighter">{pkg.price}</div>
@@ -329,7 +329,7 @@ const Services = ({ setPage, targetSection }: PageProps) => {
         <div className="mb-24">
            <div className="flex items-end gap-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
              <ShoppingBag className="w-8 h-8 text-violet-600" /> 
-             <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight">Advanced Solutions</h2>
+             <h2 className="text-3xl font-bold uppercase tracking-tight">Advanced Solutions</h2>
            </div>
            <div className="grid md:grid-cols-2 gap-8">
               <Card className="hover:border-violet-600 transition-colors">
@@ -359,14 +359,14 @@ const Services = ({ setPage, targetSection }: PageProps) => {
         {/* APP DEVELOPMENT */}
         <div className="mb-24" id="app-dev">
            <div className="max-w-3xl mx-auto">
-             <div className="p-8 md:p-12 bg-black text-white text-center relative overflow-hidden">
+             <div className="p-12 bg-black text-white text-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-violet-900/50 blur-[80px]"></div>
                 <Smartphone className="w-12 h-12 text-violet-500 mx-auto mb-4 relative z-10" />
                 <h3 className="text-2xl font-bold mb-2 uppercase relative z-10">Custom Mobile App Development</h3>
-                <div className="text-3xl md:text-5xl font-black mb-4 relative z-10 text-white flex flex-wrap items-baseline justify-center gap-2">
-                  <span className="text-xl md:text-2xl font-normal text-neutral-400">Starting at</span> $6,500
+                <div className="text-5xl font-black mb-4 relative z-10 text-white flex items-baseline justify-center gap-2">
+                  <span className="text-2xl font-normal text-neutral-400">Starting at</span> $6,500
                 </div>
-                <p className="text-neutral-400 mb-8 relative z-10 max-w-2xl mx-auto text-sm md:text-base">
+                <p className="text-neutral-400 mb-8 relative z-10 max-w-2xl mx-auto">
                   One of the most affordable full-scale app development solutions in the industry, without compromising on quality, performance, or security.
                 </p>
                 <Button className="w-full md:w-auto mx-auto border-white text-white hover:bg-white hover:text-black relative z-10" onClick={() => setPage('contact')}>Discuss Your App Idea</Button>
@@ -378,7 +378,7 @@ const Services = ({ setPage, targetSection }: PageProps) => {
         <div className="mb-24" id="care-plans">
            <div className="flex items-end gap-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
              <Shield className="w-8 h-8 text-violet-600" /> 
-             <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight">Care Plans</h2>
+             <h2 className="text-3xl font-bold uppercase tracking-tight">Care Plans</h2>
            </div>
            <div className="grid md:grid-cols-2 gap-6">
               <Card>
@@ -552,7 +552,7 @@ const Portfolio = ({ setPage }: PageProps) => (
           <p className="text-neutral-400 mb-8 max-w-xl mx-auto">
             Due to NDA agreements with our enterprise clients, some work cannot be displayed publicly. Book a call for a private walkthrough.
           </p>
-          <Button className="mx-auto bg-white text-black border-0 hover:bg-neutral-200" onClick={() => setPage('book')}>Request Private Portfolio</Button>
+          <Button className="mx-auto bg-white text-black border-0 hover:bg-neutral-200" onClick={() => setPage('contact')}>Request Private Portfolio</Button>
         </div>
       </div>
 
@@ -838,21 +838,6 @@ const Contact = ({ setPage }: { setPage?: (page: PageType) => void }) => {
   );
 };
 
-const Book = () => (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-24 pb-12">
-    <Section className="text-center max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">Book a Free Consult</h1>
-      <div className="bg-white dark:bg-black h-[600px] border border-neutral-200 dark:border-neutral-800 flex items-center justify-center shadow-lg">
-        <div className="text-center p-8">
-           <p className="text-neutral-500 mb-4 font-mono text-sm">[Calendly Embed Widget Placeholder]</p>
-           <Button>Open Calendly Popup</Button>
-           <p className="text-xs text-neutral-400 mt-4">Simulating 3rd party iframe load...</p>
-        </div>
-      </div>
-    </Section>
-  </motion.div>
-);
-
 const Privacy = () => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-24 pb-12">
     <Section className="max-w-3xl prose dark:prose-invert">
@@ -902,29 +887,6 @@ export default function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // Set the dynamic favicon
-  useEffect(() => {
-    // SVG Data URI for B5 logo (Black background, white B, blue 5)
-    const faviconSvg = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-        <rect width="100" height="100" rx="20" fill="black"/>
-        <text x="50" y="75" font-family="Arial" font-weight="bold" font-size="60" text-anchor="middle" fill="white">
-          B<tspan fill="#2563eb">5</tspan>
-        </text>
-      </svg>
-    `;
-    const faviconUrl = `data:image/svg+xml;base64,${btoa(faviconSvg)}`;
-    
-    // Create/update link element
-    let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
-    if (!link) {
-      link = document.createElement('link');
-      link.rel = 'icon';
-      document.getElementsByTagName('head')[0].appendChild(link);
-    }
-    link.href = faviconUrl;
-  }, []);
-
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
 
   const navLinks: { id: PageType; label: string }[] = [
@@ -964,7 +926,7 @@ export default function App() {
                 {link.label}
               </button>
             ))}
-            <Button onClick={() => handleNav('book')} className="text-xs h-10 px-6">Start Your Project</Button>
+            <Button onClick={() => handleNav('contact')} className="text-xs h-10 px-6">Start Your Project</Button>
             <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors">
               {theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
             </button>
@@ -1000,7 +962,7 @@ export default function App() {
                     {link.label}
                   </button>
                 ))}
-                <Button onClick={() => handleNav('book')} className="w-full">Book Consult</Button>
+                <Button onClick={() => handleNav('contact')} className="w-full">Book Consult</Button>
               </div>
             </motion.div>
           )}
@@ -1015,7 +977,6 @@ export default function App() {
           {page === 'portfolio' && <Portfolio key="portfolio" setPage={setPage} />}
           {page === 'about' && <About key="about" setPage={setPage} />}
           {page === 'contact' && <Contact key="contact" setPage={setPage} />}
-          {page === 'book' && <Book key="book" />}
           {page === 'privacy' && <Privacy key="privacy" />}
         </AnimatePresence>
       </main>
@@ -1072,7 +1033,7 @@ export default function App() {
           </div>
           <div>
               <h4 className="font-bold mb-6 uppercase text-sm tracking-widest text-neutral-400">Action</h4>
-              <Button className="w-full mb-4 text-xs h-12" onClick={() => handleNav('book')}>Book Free Consult</Button>
+              <Button className="w-full mb-4 text-xs h-12" onClick={() => handleNav('contact')}>Book Free Consult</Button>
               <p className="text-xs text-neutral-500 text-center">No credit card required.</p>
           </div>
         </div>
